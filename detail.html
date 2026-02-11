@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Company Details - Fraxy Match Deal Making 2026</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .hero-section {
+            background: white;
+            border-bottom: 1px solid #eee;
+            padding: 40px 0;
+            margin-bottom: 30px;
+        }
+
+        .company-logo {
+            max-width: 200px;
+            max-height: 120px;
+            object-fit: contain;
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .detail-card {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .detail-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6c757d;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            color: #212529;
+            margin-bottom: 16px;
+        }
+
+        .badge-sector {
+            font-size: 0.9em;
+            padding: 8px 12px;
+            margin: 0 4px 8px 0;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #6c757d;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-link:hover {
+            color: #0d6efd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container my-4">
+        <a href="index.html" class="back-link">
+            <i class="bi bi-arrow-left me-2"></i> Back to Directory
+        </a>
+    </div>
+
+    <div id="loading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+        <p class="mt-3 text-muted">Loading company details...</p>
+    </div>
+
+    <div id="activeContent" style="display: none;">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-auto text-center text-md-start mb-3 mb-md-0">
+                        <div id="logoContainer"></div>
+                    </div>
+                    <div class="col">
+                        <h1 class="fw-bold mb-2" id="companyName"></h1>
+                        <div class="mb-3">
+                            <span id="companyType" class="badge bg-secondary me-2"></span>
+                            <span id="companyLocation" class="badge bg-info text-dark"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-auto mt-3 mt-md-0">
+                        <div id="actionButtons" class="d-flex gap-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="container">
+            <div class="row">
+                <!-- Left Column: Main Info -->
+                <div class="col-lg-8">
+                    <div class="detail-card">
+                        <h4 class="mb-4">About</h4>
+                        <p id="companyAbout" class="text-secondary" style="white-space: pre-wrap; line-height: 1.6;">
+                        </p>
+                    </div>
+
+                    <div class="detail-card">
+                        <h4 class="mb-4">Targeted Investment Sectors</h4>
+                        <div id="sectorList" class="d-flex flex-wrap"></div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Sidebar Info -->
+                <div class="col-lg-4">
+                    <div class="detail-card">
+                        <h5 class="mb-3">Representative</h5>
+                        <div class="detail-label">Name</div>
+                        <div class="detail-value" id="repName"></div>
+
+                        <div class="detail-label">Title / Sub-Type</div>
+                        <div class="detail-value" id="repTitle"></div>
+                    </div>
+
+                    <div class="detail-card">
+                        <h5 class="mb-3">Investment Details</h5>
+
+                        <div class="detail-label">Round</div>
+                        <div class="detail-value" id="invRound">—</div>
+
+                        <div class="detail-label">Capital Sought / Cap</div>
+                        <div class="detail-value" id="invCap">—</div>
+
+                        <div class="detail-label">Geographic Preference</div>
+                        <div class="detail-value" id="invGeo">—</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="errorContainer" style="display: none;">
+        <div class="alert alert-danger text-center">
+            <h4>Company Not Found</h4>
+            <p>We couldn't find the requested company. It may have been removed or the link is incorrect.</p>
+            <a href="index.html" class="btn btn-primary mt-2">Return to Directory</a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
+
+    <script>
+        const csvUrl = 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/data.csv';
+
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function renderDetail(row) {
+            // Basic Info
+            const companyName = row.Company || row['Company '] || 'Unknown Company';
+            document.title = `${companyName} - Details`;
+            $('#companyName').text(companyName);
+
+            // Logo
+            if (row.companyLogos && row.companyLogos.trim()) {
+                $('#logoContainer').html(`<img src="${row.companyLogos}" class="company-logo" alt="${companyName}">`);
+            } else {
+                $('#logoContainer').html('<div class="company-logo d-flex align-items-center justify-content-center bg-light text-muted" style="width:120px;height:120px;">No Logo</div>');
+            }
+
+            // Badges
+            const type = row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '';
+            const loc = row.Location || row['Company Location'] || row['Company Location'] || '';
+
+            if (type) $('#companyType').text(type).show(); else $('#companyType').hide();
+            if (loc) $('#companyLocation').text(loc).show(); else $('#companyLocation').hide();
+
+            // About
+            $('#companyAbout').text(row.About || 'No description available.');
+
+            // Buttons
+            const btns = [];
+            if (row['Company Website']) {
+                btns.push(`<a href="${row['Company Website']}" target="_blank" class="btn btn-outline-primary"><i class="bi bi-globe me-2"></i>Website</a>`);
+            }
+            if (row['Social Media']) {
+                btns.push(`<a href="${row['Social Media']}" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-linkedin me-2"></i>Social</a>`);
+            }
+            $('#actionButtons').html(btns.join(''));
+
+            // Sidebar - Representative
+            $('#repName').text(row.Representative || '—');
+            $('#repTitle').text(row['Representative Title'] || row['Company Sub-Type'] || '—');
+
+            // Sidebar - Investment
+            // Rounds
+            let rounds = [];
+            ['Seed & Pre-Series A', 'Series A', 'Series B', 'Series C and Beyond', 'IPO'].forEach(k => {
+                // Check if column exists and is 'Y' or if the Round column contains text
+                if (row[k] === 'Y') rounds.push(k);
+            });
+            // Also check the specific "Investment Round" column if it has comma data
+            const mainRound = row['Inveetment Round'] || row['Investment Round'];
+            if (mainRound && mainRound !== 'Y' && !rounds.includes(mainRound)) {
+                // It might be a comma list
+                rounds.push(mainRound); // simplistic, relying on the 'Y' columns mostly usually
+            }
+            $('#invRound').text(rounds.length ? rounds.join(', ') : (mainRound || '—'));
+
+            // Capital
+            // Similar check for Capital columns
+            let caps = [];
+            const capKeys = [
+                "500,000 USD or below", "500,001 to 1,000,000 USD", "1,000,001 to 2,500,000 USD",
+                "2,500,001 to 5,000,000 USD", "5,000,001 to 7,500,000 USD", "7,500,001 to 10,000,000 USD",
+                "10,000,001 to 25,000,000 USD", "25,000,001 to 50,000,000 USD", "50,000,001 USD or above"
+            ];
+            capKeys.forEach(k => { if (row[k] === 'Y') caps.push(k); });
+
+            // Also check "Investment Capial / Capital Seek" column
+            const mainCap = row['Investment Capial / Capital Seek'];
+            if (caps.length === 0 && mainCap) caps.push(mainCap);
+
+            $('#invCap').text(caps.length ? caps.join(', ') : '—');
+
+
+            // Geography
+            let geos = [];
+            ['Asia', 'Europe', 'North America', 'Middle East', 'Australasia', 'Africa', 'South America'].forEach(region => {
+                if (row[region] === 'Y') geos.push(region);
+            });
+            $('#invGeo').text(geos.length ? geos.join(', ') : (row['Investment Geographical Preference'] || '—'));
+
+
+            // Sectors
+            let sectors = [];
+            // Hardcoded list from index.html logic plus potentially others
+            const sectorKeys = [
+                'Financial Technology', 'Deep Technology', 'Environment, Energy and Clean Technology',
+                'Healthcare Technology', 'Consumer', 'Digital Entertainment and Media', 'Manufacturing Technology',
+                'Infrastructure and Real Estate Services', 'Food and Agriculture', 'Education'
+            ];
+
+            sectorKeys.forEach(key => {
+                if (row[key] === 'Y') {
+                    // Clean names
+                    let displayName = key
+                        .replace('Financial Technology', 'FinTech')
+                        .replace('Deep Technology', 'Deep Tech')
+                        .replace('Environment, Energy and Clean Technology', 'Clean Energy')
+                        .replace('Healthcare Technology', 'HealthTech')
+                        .replace('Digital Entertainment and Media', 'Media & Ent')
+                        .replace('Manufacturing Technology', 'Manuf Tech')
+                        .replace('Infrastructure and Real Estate Services', 'Infra & RE')
+                        .replace('Food and Agriculture', 'Food & Ag');
+                    sectors.push(`<span class="badge bg-light text-dark border badge-sector">${displayName}</span>`);
+                }
+            });
+
+            if (sectors.length === 0) {
+                sectors.push('<span class="text-muted">No specific sectors listed</span>');
+            }
+            $('#sectorList').html(sectors.join(''));
+
+            // Show content
+            $('#loading').hide();
+            $('#activeContent').fadeIn();
+        }
+
+        // Load Data
+        const targetCompany = getQueryParam('company');
+
+        if (!targetCompany) {
+            $('#loading').hide();
+            $('#errorContainer').show();
+        } else {
+            Papa.parse(csvUrl, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    const rawRows = results.data;
+                    if (rawRows.length < 3) {
+                        $('#loading').hide();
+                        $('#errorContainer').html('<h4>Error loading data</h4>').show();
+                        return;
+                    }
+
+                    // Headers are in row 2 (index 2)
+                    const headers = rawRows[2].map(h => (h || '').trim().replace(/\n/g, ' '));
+
+                    // Parse all to find match
+                    let foundRow = null;
+
+                    for (let i = 3; i < rawRows.length; i++) {
+                        const rowArray = rawRows[i];
+                        const obj = {};
+                        rowArray.forEach((val, idx) => {
+                            if (idx < headers.length && headers[idx]) {
+                                obj[headers[idx]] = (val || '').trim();
+                            }
+                        });
+
+                        const cName = obj['Company'] || obj['Company '] || '';
+                        if (cName === targetCompany) {
+                            foundRow = obj;
+                            break;
+                        }
+                    }
+
+                    if (foundRow) {
+                        renderDetail(foundRow);
+                    } else {
+                        $('#loading').hide();
+                        $('#errorContainer').show();
+                    }
+                },
+                error: function (err) {
+                    console.error(err);
+                    $('#loading').hide();
+                    $('#errorContainer').html('<h4>Connection Error</h4><p>Could not load data.</p>').show();
+                }
+            });
+        }
+    </script>
+
+</body>
+
+</html>
