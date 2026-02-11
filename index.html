@@ -54,7 +54,19 @@
 
   <div class="container my-5">
     <h1 class="text-center mb-4 fw-bold">Fraxy Match Deal Making 2026</h1>
-    <p class="text-center text-muted mb-5">Investors • Projects • Representatives</p>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills justify-content-center mb-4" id="viewTabs">
+      <li class="nav-item">
+        <a class="nav-link active" href="#" data-view="investors">Investors</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="projects">Projects</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="#" data-view="representatives">Representatives</a>
+      </li>
+    </ul>
 
     <!-- Filters -->
     <div class="row g-3 mb-4 justify-content-center">
@@ -99,12 +111,32 @@
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
 
   <script>
-    // === Improved version with dynamic sectors from real data columns ===
+    // === Configuration ===
+    const viewConfig = {
+      investors: {
+        url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/working.csv',
+        headerRow: 1, // Line 2 (0-indexed)
+        dataStart: 2, // Line 3 (0-indexed) -- based on visual inspection of working.csv
+        type: 'investor'
+      },
+      projects: {
+        url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/project-list.csv',
+        headerRow: 2, // Line 3 (0-indexed)
+        dataStart: 3, // Line 4 (0-indexed)
+        type: 'project'
+      },
+      representatives: {
+        url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/representative-list.csv',
+        headerRow: 1, // Line 2 (0-indexed)
+        dataStart: 2, // Line 3 (0-indexed)
+        type: 'rep'
+      }
+    };
 
-    const csvUrl = 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/main-list.csv';
-
+    let currentView = 'investors';
     let allData = [];
 
+    // === Rendering ===
     function renderCards(data) {
       const container = $('#cardsContainer');
       container.empty();
@@ -115,127 +147,196 @@
       }
 
       data.forEach(row => {
-        // Company name (try both possible keys)
-        const company = (row.Company || row['Company '] || '').trim();
-        if (!company || company === 'Company') return;
+        let cardHTML = '';
 
-        const logo = row.companyLogos?.trim()
-          ? `<img src="${row.companyLogos}" class="card-img-top" alt="${company} logo">`
-          : '';
+        if (currentView === 'investors') {
+          // --- Investors View ---
+          const company = (row.Company || row['Company '] || '').trim();
+          if (!company || company === 'Company') return;
 
-        const type = (row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '').trim();
-        const typeBadge = type ? `<span class="badge bg-secondary badge-type">${type}</span>` : '';
+          const logo = row.companyLogos?.trim()
+            ? `<img src="${row.companyLogos}" class="card-img-top" alt="${company} logo">`
+            : '';
 
-        const loc = (row.Location || row['Company Location'] || '').trim() || '—';
-        const locationBadge = loc !== '—' ? `<span class="badge bg-info badge-type">${loc}</span>` : '';
+          const type = (row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '').trim();
+          const typeBadge = type ? `<span class="badge bg-secondary badge-type">${type}</span>` : '';
+          const loc = (row.Location || row['Company Location'] || '').trim() || '—';
+          const locationBadge = loc !== '—' ? `<span class="badge bg-info badge-type">${loc}</span>` : '';
 
-        // === Dynamic sectors: find all columns that look like sectors and have 'Y' ===
-        let sectors = [];
-        Object.keys(row).forEach(key => {
-          const trimmedKey = key.trim();
-          // Look for known sector-like columns
-          if (trimmedKey && row[key] === 'Y' && (
-            trimmedKey.includes('Financial Technology') ||
-            trimmedKey.includes('Deep Technology') ||
-            trimmedKey.includes('Environment') ||
-            trimmedKey.includes('Healthcare Technology') ||
-            trimmedKey.includes('Consumer') ||
-            trimmedKey.includes('Digital Entertainment') ||
-            trimmedKey.includes('Manufacturing Technology') ||
-            trimmedKey.includes('Infrastructure') ||
-            trimmedKey.includes('Food and Agriculture') ||
-            trimmedKey.includes('Education')
-          )) {
-            // Clean display name
-            let displayName = trimmedKey
-              .replace('Financial Technology', 'FinTech')
-              .replace('Deep Technology', 'Deep Tech')
-              .replace('Environment, Energy and Clean Technology', 'Clean Energy')
-              .replace('Healthcare Technology', 'HealthTech')
-              .replace('Digital Entertainment and Media', 'Media & Ent')
-              .replace('Manufacturing Technology', 'Manuf Tech')
-              .replace('Infrastructure and Real Estate Services', 'Infra & RE')
-              .replace('Food and Agriculture', 'Food & Ag')
-              .replace('Education', 'Education');
-            sectors.push(displayName);
-          }
-        });
+          const sectors = parseSectors(row);
+          const sectorText = sectors.length ? sectors.join(' • ') : '—';
 
-        const sectorText = sectors.length ? sectors.join(' • ') : '—';
+          const rep = row.Representative?.trim()
+            ? `${row.Representative} <small class="text-muted">(${row['Representative Title'] || row['Company Sub-Type'] || '—'})</small>`
+            : '—';
 
-        const rep = row.Representative?.trim()
-          ? `${row.Representative} <small class="text-muted">(${row['Representative Title'] || row['Company Sub-Type'] || '—'})</small>`
-          : '—';
+          const about = row.About?.trim()
+            ? row.About.substring(0, 160) + (row.About.length > 160 ? '...' : '')
+            : 'No description available.';
 
-        const about = row.About?.trim()
-          ? row.About.substring(0, 160) + (row.About.length > 160 ? '...' : '')
-          : 'No description available.';
+          const websiteLink = row['Company Website']?.trim()
+            ? `<a href="${row['Company Website']}" target="_blank" class="btn btn-sm btn-outline-primary">Website</a>`
+            : '';
+          const socialLink = row['Social Media']?.trim()
+            ? `<a href="${row['Social Media']}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">Social</a>`
+            : '';
 
-        const websiteLink = row['Company Website']?.trim()
-          ? `<a href="${row['Company Website']}" target="_blank" class="btn btn-sm btn-outline-primary">Website</a>`
-          : '';
-
-        const socialLink = row['Social Media']?.trim()
-          ? `<a href="${row['Social Media']}" target="_blank" class="btn btn-sm btn-outline-secondary ms-2">Social</a>`
-          : '';
-
-        const card = `
-          <div class="col-lg-4 col-md-6">
-            <div class="card h-100 shadow-sm">
-              ${logo}
-              <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2">
-                    <a href="detail.html?company=${encodeURIComponent(company)}" class="text-decoration-none text-dark stretched-link">
-                        ${company}
-                    </a>
-                </h5>
-                <div class="mb-3">
-                  ${typeBadge} ${locationBadge}
+          cardHTML = `
+            <div class="col-lg-4 col-md-6">
+              <div class="card h-100 shadow-sm">
+                ${logo}
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title mb-2">
+                      <a href="detail.html?type=investor&id=${encodeURIComponent(company)}" class="text-decoration-none text-dark stretched-link">
+                          ${company}
+                      </a>
+                  </h5>
+                  <div class="mb-3">${typeBadge} ${locationBadge}</div>
+                  <div class="small mb-2"><strong>Rep:</strong> ${rep}</div>
+                  <div class="small mb-3"><strong>Targeted Sectors:</strong><br>${sectorText}</div>
+                  <p class="card-text about flex-grow-1">${about}</p>
                 </div>
-                <div class="small mb-2">
-                  <strong>Rep:</strong> ${rep}
+                <div class="card-footer bg-white border-0 pt-0 footer-links text-center" style="position: relative; z-index: 2;">
+                  ${websiteLink}${socialLink}
                 </div>
-                <div class="small mb-3">
-                  <strong>Targeted Sectors:</strong><br>${sectorText}
-                </div>
-                <p class="card-text about flex-grow-1">${about}</p>
               </div>
-              <div class="card-footer bg-white border-0 pt-0 footer-links text-center" style="position: relative; z-index: 2;">
-                ${websiteLink}${socialLink}
-              </div>
-            </div>
-          </div>
-        `;
+            </div>`;
 
-        container.append(card);
+        } else if (currentView === 'projects') {
+          // --- Projects View ---
+          const company = (row['Company Name'] || '').trim();
+          const projectName = (row['Project Name'] || '').trim();
+          if (!projectName) return;
+
+          const desc = (row['Project Dexcription'] || '').trim(); // note typo in CSV header
+          const shortDesc = desc.length > 180 ? desc.substring(0, 180) + '...' : desc;
+
+          const loc = (row['Project Location'] || '').trim() || '—';
+          const locationBadge = loc !== '—' ? `<span class="badge bg-info badge-type">${loc}</span>` : '';
+
+          // Parse sectors - logic handles both formats
+          const sectors = parseSectors(row);
+          const sectorText = sectors.length ? sectors.join(' • ') : '—';
+
+          const linkBtn = `<a href="detail.html?type=project&id=${encodeURIComponent(projectName)}" class="btn btn-primary btn-sm stretched-link">View Details</a>`;
+
+          cardHTML = `
+            <div class="col-lg-4 col-md-6">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body d-flex flex-column">
+                  <h5 class="card-title mb-1">${projectName}</h5>
+                  <h6 class="card-subtitle text-muted mb-3">${company}</h6>
+                  <div class="mb-3">${locationBadge}</div>
+                  <div class="small mb-3"><strong>Targeted Sectors:</strong><br>${sectorText}</div>
+                  <p class="card-text about flex-grow-1">${shortDesc || 'No description.'}</p>
+                  <div class="mt-3 text-center">
+                    ${linkBtn}
+                  </div>
+                </div>
+              </div>
+            </div>`;
+
+        } else if (currentView === 'representatives') {
+          // --- Representatives View ---
+          const repName = (row['Company Representative'] || '').trim();
+          const company = (row['Company Name'] || '').trim();
+          const title = (row['Title'] || '').trim();
+
+          if (!repName) return;
+
+          cardHTML = `
+            <div class="col-md-6 col-lg-4">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                  <div class="mb-3">
+                    <i class="bi bi-person-circle display-4 text-secondary"></i>
+                  </div>
+                  <h5 class="card-title">${repName}</h5>
+                  <p class="text-primary mb-1">${title}</p>
+                  <p class="text-muted">${company}</p>
+                </div>
+              </div>
+            </div>`;
+        }
+
+        container.append(cardHTML);
       });
+    }
+
+    function parseSectors(row) {
+      let sectors = [];
+
+      // Method 1: Boolean 'Y' columns (used in both files largely)
+      const potentialKeys = Object.keys(row);
+      potentialKeys.forEach(key => {
+        const trimmedKey = key.trim();
+        if (row[key] === 'Y' && (
+          trimmedKey.includes('Financial Technology') ||
+          trimmedKey.includes('Deep Technology') ||
+          trimmedKey.includes('Environment') ||
+          trimmedKey.includes('Healthcare Technology') ||
+          trimmedKey.includes('Consumer') ||
+          trimmedKey.includes('Digital Entertainment') ||
+          trimmedKey.includes('Manufacturing Technology') ||
+          trimmedKey.includes('Infrastructure') ||
+          trimmedKey.includes('Food and Agriculture') ||
+          trimmedKey.includes('Education')
+        )) {
+          addSector(sectors, trimmedKey);
+        }
+      });
+
+      // Method 2: 'Targeted Sector' summary column (csv string)
+      if (sectors.length === 0 && row['Targeted Sector']) {
+        const raw = row['Targeted Sector'].split(',');
+        raw.forEach(s => addSector(sectors, s.trim()));
+      }
+
+      return [...new Set(sectors)]; // unique
+    }
+
+    function addSector(list, rawName) {
+      let name = rawName
+        .replace('Financial Technology', 'FinTech')
+        .replace('Deep Technology', 'Deep Tech')
+        .replace('Environment, Energy and Clean Technology', 'Clean Energy')
+        .replace('Healthcare Technology', 'HealthTech')
+        .replace('Digital Entertainment and Media', 'Media & Ent')
+        .replace('Manufacturing Technology', 'Manuf Tech')
+        .replace('Infrastructure and Real Estate Services', 'Infra & RE')
+        .replace('Food and Agriculture', 'Food & Ag')
+        .replace('Education', 'Education');
+      if (name) list.push(name);
     }
 
     function applyFilters() {
       const search = ($('#searchInput').val() || '').toLowerCase().trim();
       const typeVal = $('#typeFilter').val();
-      const sectorKey = $('#sectorFilter').val();
+      const sectorKey = $('#sectorFilter').val(); // Matches the column name roughly
 
       const filtered = allData.filter(row => {
-        const company = (row.Company || row['Company '] || '').trim();
-        if (!company) return false;
-
-        const fullText = [
-          company,
-          row.Representative || '',
-          row.Location || '',
-          row['Company Location'] || '',
-          row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '',
-          row.About || ''
-        ].join(' ').toLowerCase();
-
+        // Broad search
+        const values = Object.values(row).join(' ').toLowerCase();
         let match = true;
-        if (search) match = match && fullText.includes(search);
-        if (typeVal) {
+
+        if (search) match = match && values.includes(search);
+
+        // Type Filter (only relevant for Investors view mostly)
+        if (currentView === 'investors' && typeVal) {
           const type = row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '';
           match = match && type === typeVal;
         }
-        if (sectorKey) match = match && (row[sectorKey] === 'Y' || row[sectorKey.trim()] === 'Y');
+
+        // Sector Filter
+        if (sectorKey) {
+          // Check Boolean 'Y'
+          const hasBool = (row[sectorKey] === 'Y' || row[sectorKey.trim()] === 'Y');
+          // Check Summary string
+          const summary = row['Targeted Sector'] || '';
+          const hasString = summary.includes(sectorKey);
+
+          match = match && (hasBool || hasString);
+        }
 
         return match;
       });
@@ -243,65 +344,96 @@
       renderCards(filtered);
     }
 
-    // Load data
-    Papa.parse(csvUrl, {
-      download: true,
-      header: false,           // Important: headers are not in row 1
-      skipEmptyLines: true,
-      complete: function (results) {
-        if (results.errors.length > 0) {
-          console.error('Parsing errors:', results.errors);
-        }
+    function loadView(viewName) {
+      currentView = viewName;
+      const config = viewConfig[viewName];
 
-        const rawRows = results.data;
+      // Update UI
+      $('#viewTabs .nav-link').removeClass('active');
+      $(`#viewTabs .nav-link[data-view="${viewName}"]`).addClass('active');
 
-        if (rawRows.length < 3) {
-          console.error('CSV too short');
-          return;
-        }
-
-        // Headers are in row 2 (index 2)
-        const headers = rawRows[2].map(h => (h || '').trim().replace(/\n/g, ' '));
-
-        // Data starts from row 3 (index 3)
-        allData = rawRows.slice(3).map(rowArray => {
-          const obj = {};
-          rowArray.forEach((val, idx) => {
-            if (idx < headers.length && headers[idx]) {
-              obj[headers[idx]] = (val || '').trim();
-            }
-          });
-          return obj;
-        }).filter(obj => {
-          const company = obj['Company'] || obj['Company '] || '';
-          return company && company !== 'Company';
-        });
-
-        console.log('Parsed valid entries:', allData.length);
-        if (allData.length > 0) {
-          console.log('Sample entry:', allData[0]);
-        }
-
-        // Populate type filter
-        const typeKey = headers.find(h => h.includes('Investor / Others / Project Owner')) || '';
-        if (typeKey) {
-          const types = [...new Set(allData.map(r => r[typeKey]?.trim()).filter(Boolean))];
-          types.sort().forEach(t => {
-            $('#typeFilter').append(`<option value="${t}">${t}</option>`);
-          });
-        }
-
-        renderCards(allData);
-      },
-      error: function (err) {
-        console.error('Papa.parse error:', err);
-        $('#cardsContainer').html('<div class="col-12 text-center py-5 text-danger"><h5>Error loading data</h5><p>Check console.</p></div>');
+      // Update Filter Visibility
+      if (viewName === 'projects' || viewName === 'representatives') {
+        $('#typeFilter').prop('disabled', true); // No company type in projects/reps usually
+      } else {
+        $('#typeFilter').prop('disabled', false);
       }
-    });
 
-    // Live filtering
-    $('#searchInput').on('input', applyFilters);
-    $('#typeFilter, #sectorFilter').on('change', applyFilters);
+      $('#cardsContainer').html('<div class="col-12 text-center py-5"><div class="spinner-border text-primary"></div><p class="mt-3">Loading data...</p></div>');
+
+      Papa.parse(config.url, {
+        download: true,
+        header: false, // process manually to handle variable header rows
+        skipEmptyLines: true,
+        complete: function (results) {
+          const rawRows = results.data;
+
+          if (rawRows.length <= config.dataStart) {
+            console.error('CSV too short');
+            $('#cardsContainer').html('<div class="text-center text-danger">Data source empty or invalid.</div>');
+            return;
+          }
+
+          // Dynamic Header Parsing
+          const headers = rawRows[config.headerRow].map(h => (h || '').trim().replace(/\n/g, ' '));
+
+          allData = rawRows.slice(config.dataStart).map(rowArray => {
+            const obj = {};
+            rowArray.forEach((val, idx) => {
+              if (idx < headers.length && headers[idx]) {
+                obj[headers[idx]] = (val || '').trim();
+              }
+            });
+            return obj;
+          });
+
+          // Filter out empty rows based on key columns
+          allData = allData.filter(d => {
+            if (config.type === 'investor') return (d['Company'] || d['Company ']);
+            if (config.type === 'project') return d['Project Name'];
+            if (config.type === 'rep') return d['Company Representative'];
+            return true;
+          });
+
+          console.log(`Loaded ${allData.length} entries for ${viewName}`);
+
+          // Populate Type Filter only if Investors
+          if (viewName === 'investors') {
+            $('#typeFilter').empty().append('<option value="">All Types</option>');
+            const typeKey = headers.find(h => h.includes('Investor / Others / Project Owner')) || '';
+            if (typeKey) {
+              const types = [...new Set(allData.map(r => r[typeKey]?.trim()).filter(Boolean))];
+              types.sort().forEach(t => {
+                $('#typeFilter').append(`<option value="${t}">${t}</option>`);
+              });
+            }
+          }
+
+          renderCards(allData);
+        },
+        error: function (err) {
+          console.error(err);
+          $('#cardsContainer').html('<div class="text-center text-danger">Failed to load data.</div>');
+        }
+      });
+    }
+
+    // Init
+    $(document).ready(function () {
+      // Tab Click
+      $('#viewTabs .nav-link').on('click', function (e) {
+        e.preventDefault();
+        const view = $(this).data('view');
+        loadView(view);
+      });
+
+      // Filter Events
+      $('#searchInput').on('input', applyFilters);
+      $('#typeFilter, #sectorFilter').on('change', applyFilters);
+
+      // Initial Load
+      loadView('investors');
+    });
   </script>
 </body>
 

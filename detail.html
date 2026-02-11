@@ -174,151 +174,221 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
 
     <script>
-        const csvUrl = 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/data.csv';
+        const config = {
+            investor: {
+                url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/working.csv',
+                headerRow: 1, // Row 2
+                dataStart: 2, // Row 3
+                idCol: 'Company', // or 'Company '
+                type: 'investor'
+            },
+            project: {
+                url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/project-list.csv',
+                headerRow: 2, // Row 3
+                dataStart: 3, // Row 4
+                idCol: 'Project Name',
+                type: 'project'
+            }
+        };
 
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
-        function renderDetail(row) {
-            // Basic Info
-            const companyName = row.Company || row['Company '] || 'Unknown Company';
-            document.title = `${companyName} - Details`;
-            $('#companyName').text(companyName);
-
-            // Logo
-            if (row.companyLogos && row.companyLogos.trim()) {
-                $('#logoContainer').html(`<img src="${row.companyLogos}" class="company-logo" alt="${companyName}">`);
-            } else {
-                $('#logoContainer').html('<div class="company-logo d-flex align-items-center justify-content-center bg-light text-muted" style="width:120px;height:120px;">No Logo</div>');
-            }
-
-            // Badges
-            const type = row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'] || '';
-            const loc = row.Location || row['Company Location'] || row['Company Location'] || '';
-
-            if (type) $('#companyType').text(type).show(); else $('#companyType').hide();
-            if (loc) $('#companyLocation').text(loc).show(); else $('#companyLocation').hide();
-
-            // About
-            $('#companyAbout').text(row.About || 'No description available.');
-
-            // Buttons
-            const btns = [];
-            if (row['Company Website']) {
-                btns.push(`<a href="${row['Company Website']}" target="_blank" class="btn btn-outline-primary"><i class="bi bi-globe me-2"></i>Website</a>`);
-            }
-            if (row['Social Media']) {
-                btns.push(`<a href="${row['Social Media']}" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-linkedin me-2"></i>Social</a>`);
-            }
-            $('#actionButtons').html(btns.join(''));
-
-            // Sidebar - Representative
-            $('#repName').text(row.Representative || '—');
-            $('#repTitle').text(row['Representative Title'] || row['Company Sub-Type'] || '—');
-
-            // Sidebar - Investment
-            // Rounds
-            let rounds = [];
-            ['Seed & Pre-Series A', 'Series A', 'Series B', 'Series C and Beyond', 'IPO'].forEach(k => {
-                // Check if column exists and is 'Y' or if the Round column contains text
-                if (row[k] === 'Y') rounds.push(k);
-            });
-            // Also check the specific "Investment Round" column if it has comma data
-            const mainRound = row['Inveetment Round'] || row['Investment Round'];
-            if (mainRound && mainRound !== 'Y' && !rounds.includes(mainRound)) {
-                // It might be a comma list
-                rounds.push(mainRound); // simplistic, relying on the 'Y' columns mostly usually
-            }
-            $('#invRound').text(rounds.length ? rounds.join(', ') : (mainRound || '—'));
-
-            // Capital
-            // Similar check for Capital columns
-            let caps = [];
-            const capKeys = [
-                "500,000 USD or below", "500,001 to 1,000,000 USD", "1,000,001 to 2,500,000 USD",
-                "2,500,001 to 5,000,000 USD", "5,000,001 to 7,500,000 USD", "7,500,001 to 10,000,000 USD",
-                "10,000,001 to 25,000,000 USD", "25,000,001 to 50,000,000 USD", "50,000,001 USD or above"
-            ];
-            capKeys.forEach(k => { if (row[k] === 'Y') caps.push(k); });
-
-            // Also check "Investment Capial / Capital Seek" column
-            const mainCap = row['Investment Capial / Capital Seek'];
-            if (caps.length === 0 && mainCap) caps.push(mainCap);
-
-            $('#invCap').text(caps.length ? caps.join(', ') : '—');
-
-
-            // Geography
-            let geos = [];
-            ['Asia', 'Europe', 'North America', 'Middle East', 'Australasia', 'Africa', 'South America'].forEach(region => {
-                if (row[region] === 'Y') geos.push(region);
-            });
-            $('#invGeo').text(geos.length ? geos.join(', ') : (row['Investment Geographical Preference'] || '—'));
-
-
-            // Sectors
+        function renderDetail(row, type) {
+            let title, subtitle, desc, logoHtml = '', badges = '', aboutLabel = 'About';
             let sectors = [];
-            // Hardcoded list from index.html logic plus potentially others
-            const sectorKeys = [
-                'Financial Technology', 'Deep Technology', 'Environment, Energy and Clean Technology',
-                'Healthcare Technology', 'Consumer', 'Digital Entertainment and Media', 'Manufacturing Technology',
-                'Infrastructure and Real Estate Services', 'Food and Agriculture', 'Education'
-            ];
+            let repName = '—', repTitle = '—';
+            let buttons = '';
 
-            sectorKeys.forEach(key => {
-                if (row[key] === 'Y') {
-                    // Clean names
-                    let displayName = key
-                        .replace('Financial Technology', 'FinTech')
+            // --- Common Helper: Sector Parsing ---
+            const parseSectors = (r) => {
+                let s = [];
+                // Boolean 'Y'
+                Object.keys(r).forEach(k => {
+                    if (r[k] === 'Y' && (
+                        k.includes('Financial Technology') || k.includes('Deep Technology') ||
+                        k.includes('Environment') || k.includes('Healthcare') ||
+                        k.includes('Consumer') || k.includes('Entertainment') ||
+                        k.includes('Manufacturing') || k.includes('Infrastructure') ||
+                        k.includes('Agriculture') || k.includes('Education')
+                    )) s.push(k);
+                });
+                // String summary
+                if (s.length === 0 && r['Targeted Sector']) {
+                    r['Targeted Sector'].split(',').forEach(x => s.push(x.trim()));
+                }
+                return [...new Set(s)].map(raw => {
+                    // Cleanup
+                    return raw.replace('Financial Technology', 'FinTech')
                         .replace('Deep Technology', 'Deep Tech')
                         .replace('Environment, Energy and Clean Technology', 'Clean Energy')
                         .replace('Healthcare Technology', 'HealthTech')
                         .replace('Digital Entertainment and Media', 'Media & Ent')
                         .replace('Manufacturing Technology', 'Manuf Tech')
                         .replace('Infrastructure and Real Estate Services', 'Infra & RE')
-                        .replace('Food and Agriculture', 'Food & Ag');
-                    sectors.push(`<span class="badge bg-light text-dark border badge-sector">${displayName}</span>`);
+                        .replace('Food and Agriculture', 'Food & Ag')
+                        .replace('Education', 'Education');
+                });
+            };
+
+
+            if (type === 'investor') {
+                // === Investor Mapping ===
+                title = row.Company || row['Company '] || 'Unknown Company';
+                subtitle = '';
+                desc = row.About || 'No description available.';
+
+                // Logo
+                if (row.companyLogos?.trim()) {
+                    logoHtml = `<img src="${row.companyLogos}" class="company-logo" alt="${title}">`;
+                } else {
+                    logoHtml = '<div class="company-logo d-flex align-items-center justify-content-center bg-light text-muted" style="width:120px;height:120px;">No Logo</div>';
                 }
-            });
 
-            if (sectors.length === 0) {
-                sectors.push('<span class="text-muted">No specific sectors listed</span>');
+                // Badges
+                const investorType = row['Company Type - \nInvestor / Others / Project Owner'] || row['Company Type - Investor / Others / Project Owner'];
+                if (investorType) badges += `<span class="badge bg-secondary me-2">${investorType}</span>`;
+
+                const loc = row.Location || row['Company Location'];
+                if (loc) badges += `<span class="badge bg-info text-dark">${loc}</span>`;
+
+                // Links
+                if (row['Company Website']) buttons += `<a href="${row['Company Website']}" target="_blank" class="btn btn-outline-primary"><i class="bi bi-globe me-2"></i>Website</a> `;
+                if (row['Social Media']) buttons += `<a href="${row['Social Media']}" target="_blank" class="btn btn-outline-secondary"><i class="bi bi-linkedin me-2"></i>Social</a>`;
+
+                // Rep
+                repName = row.Representative;
+                repTitle = row['Representative Title'] || row['Company Sub-Type'];
+
+                // Sidebar: Investment details (keep existing logic or simplified)
+                // (Existing logic is fine, we just hide/show the container if needed)
+                $('#investmentDetailsCard').show();
+
+                // Sectors
+                sectors = parseSectors(row);
+
+            } else {
+                // === Project Mapping ===
+                title = row['Project Name'] || 'Unknown Project';
+                subtitle = row['Company Name'] || '';
+                desc = row['Project Dexcription'] || 'No description available.';
+
+                // No logo usually for projects in this CSV, use generic or hide
+                logoHtml = '<div class="company-logo d-flex align-items-center justify-content-center bg-light text-primary" style="width:120px;height:120px;"><i class="bi bi-briefcase fs-1"></i></div>';
+
+                // Badges
+                const loc = row['Project Location'];
+                if (loc) badges += `<span class="badge bg-info text-dark">${loc}</span>`;
+
+                // Links
+                // Links
+                // if (row['link']) buttons += `<a href="${row['link']}" target="_blank" class="btn btn-primary"><i class="bi bi-box-arrow-up-right me-2"></i>View Opportunity</a>`;
+
+                // Rep
+                repName = row['Project Representative'];
+                repTitle = row['Representative Title'];
+
+                // Sidebar: Hide investment details specific to investors if not relevant
+                // But projects also have "Investment Capital", "Investment Round" columns
+                $('#investmentDetailsCard').show();
+
+                // Sectors
+                sectors = parseSectors(row);
+                aboutLabel = 'Project Description';
             }
-            $('#sectorList').html(sectors.join(''));
 
-            // Show content
+            // --- Render to DOM ---
+            document.title = `${title} - Details`;
+            $('#companyName').text(title);
+            if (subtitle) $('#companyName').after(`<h5 class="text-muted">${subtitle}</h5>`);
+
+            $('#logoContainer').html(logoHtml);
+            $('#companyType').parent().html(badges); // Replace the badge container content
+
+            $('h4:contains("About")').text(aboutLabel);
+            $('#companyAbout').text(desc);
+            $('#actionButtons').html(buttons);
+
+            // Rep
+            $('#repName').text(repName || '—');
+            $('#repTitle').text(repTitle || '—');
+
+            // Sectors
+            const sectorHtml = sectors.length
+                ? sectors.map(s => `<span class="badge bg-light text-dark border badge-sector">${s}</span>`).join('')
+                : '<span class="text-muted">No specific sectors listed</span>';
+            $('#sectorList').html(sectorHtml);
+
+            // Investment Details (Common fields mapping)
+            // Round
+            let rounds = [];
+            ['Seed & Pre-Series A', 'Series A', 'Series B', 'Series C and Beyond', 'IPO'].forEach(k => { if (row[k] === 'Y') rounds.push(k); });
+            if (row['Investment Round'] && row['Investment Round'] !== 'Y' && !rounds.includes(row['Investment Round'])) rounds.push(row['Investment Round']);
+            $('#invRound').text(rounds.length ? rounds.join(', ') : '—');
+
+            // Capital
+            let caps = [];
+            // ... (Capital logic is same, keys are same in both CSVs mostly)
+            const capKeys = [
+                "500,000 USD or below", "500,001 to 1,000,000 USD", "1,000,001 to 2,500,000 USD",
+                "2,500,001 to 5,000,000 USD", "5,000,001 to 7,500,000 USD", "7,500,001 to 10,000,000 USD",
+                "10,000,001 to 25,000,000 USD", "25,000,001 to 50,000,000 USD", "50,000,001 USD or above"
+            ];
+            capKeys.forEach(k => { if (row[k] === 'Y') caps.push(k); });
+            if (caps.length === 0 && row['Investment Capital ']) caps.push(row['Investment Capital ']); // Note space in generic
+            if (caps.length === 0 && row['Investment Capial / Capital Seek']) caps.push(row['Investment Capial / Capital Seek']);
+            $('#invCap').text(caps.length ? caps.join(', ') : '—');
+
+            // Geo (Only for investors usually, but check if projects have it? Projects don't seem to have geo pref)
+            if (type === 'project') {
+                $('#invGeo').parent().hide(); // Hide Geo for projects
+            } else {
+                $('#invGeo').parent().show();
+                let geos = [];
+                ['Asia', 'Europe', 'North America', 'Middle East', 'Australasia', 'Africa', 'South America'].forEach(region => {
+                    if (row[region] === 'Y') geos.push(region);
+                });
+                $('#invGeo').text(geos.length ? geos.join(', ') : (row['Investment Geographical Preference'] || '—'));
+            }
+
             $('#loading').hide();
             $('#activeContent').fadeIn();
         }
 
         // Load Data
-        const targetCompany = getQueryParam('company');
+        const targetId = getQueryParam('id') || getQueryParam('company'); // fallback
+        const targetType = getQueryParam('type') || 'investor';
 
-        if (!targetCompany) {
+        // Select Config
+        const activeConfig = config[targetType] || config['investor'];
+
+        if (!targetId) {
             $('#loading').hide();
             $('#errorContainer').show();
         } else {
-            Papa.parse(csvUrl, {
+            Papa.parse(activeConfig.url, {
                 download: true,
                 header: false,
                 skipEmptyLines: true,
                 complete: function (results) {
                     const rawRows = results.data;
-                    if (rawRows.length < 3) {
+                    if (rawRows.length <= activeConfig.dataStart) {
                         $('#loading').hide();
                         $('#errorContainer').html('<h4>Error loading data</h4>').show();
                         return;
                     }
 
-                    // Headers are in row 2 (index 2)
-                    const headers = rawRows[2].map(h => (h || '').trim().replace(/\n/g, ' '));
+                    // Headers
+                    const headers = rawRows[activeConfig.headerRow].map(h => (h || '').trim().replace(/\n/g, ' '));
 
-                    // Parse all to find match
+                    // console.log('Headers:', headers);
+
+                    // Find Match
                     let foundRow = null;
 
-                    for (let i = 3; i < rawRows.length; i++) {
+                    for (let i = activeConfig.dataStart; i < rawRows.length; i++) {
                         const rowArray = rawRows[i];
                         const obj = {};
                         rowArray.forEach((val, idx) => {
@@ -327,18 +397,19 @@
                             }
                         });
 
-                        const cName = obj['Company'] || obj['Company '] || '';
-                        if (cName === targetCompany) {
+                        const rowId = obj[activeConfig.idCol] || obj[activeConfig.idCol + ' '];
+                        // console.log(`Checking ${rowId} vs ${targetId}`);
+                        if (rowId === targetId) {
                             foundRow = obj;
                             break;
                         }
                     }
 
                     if (foundRow) {
-                        renderDetail(foundRow);
+                        renderDetail(foundRow, activeConfig.type);
                     } else {
                         $('#loading').hide();
-                        $('#errorContainer').show();
+                        $('#errorContainer').html('<h4>Entry Not Found</h4><p>We could not find the requested entry.</p>').show();
                     }
                 },
                 error: function (err) {
