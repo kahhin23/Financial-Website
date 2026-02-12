@@ -392,7 +392,14 @@
                         password: password
                     })
                 })
-                .then(r => r.json())
+                .then(response => {
+                    if (!response.ok) {
+                    // It's good practice to handle non-2xx responses.
+                    // If the server sends HTML for a 404, this would catch it before .json()
+                    return response.text().then(text => { throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`); });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log("Response:", data);
                     if (data.success) {
