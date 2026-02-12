@@ -205,34 +205,36 @@
 
             if (type !== 'project') return;
 
-            // Mock Token Consumption
-            console.log("Mock Mode: Token consumption skipped.");
-
-            // fetch(SCRIPT_URL, {
-            //     method: 'POST',
-            //     mode: 'cors',               
-            //     credentials: 'omit',        
-            //     redirect: 'follow',
-            //     body: new URLSearchParams({
-            //         action: "consumeToken",
-            //         email:  user.email
-            //     }),
-            //     headers: {
-            //         "Content-Type": "text/plain;charset=UTF-8"
-            //     }
-            // })
-            // .then(r => r.json())
-            // .then(data => {
-            //     console.log("Consume response:", data);
-            //     if (data.success) {
-            //     user.tokens = data.tokens;
-            //     localStorage.setItem('fraxyUser', JSON.stringify(user));
-            //     console.log(`Tokens remaining: ${data.tokens}`);
-            //     } else {
-            //     console.warn("Token consume failed:", data.message);
-            //     }
-            // })
-            // .catch(err => console.error("Token API error", err));
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                mode: 'cors',
+                credentials: 'omit',
+                redirect: 'follow',
+                body: new URLSearchParams({
+                    action: "consumeToken",
+                    email: user.email
+                }),
+                headers: {
+                    "Content-Type": "text/plain;charset=UTF-8"
+                }
+            })
+                .then(r => r.json())
+                .then(data => {
+                    console.log("Consume response:", data);
+                    if (data.success) {
+                        user.tokens = data.tokens;
+                        localStorage.setItem('fraxyUser', JSON.stringify(user));
+                        console.log(`Tokens remaining: ${data.tokens}`);
+                    } else {
+                        console.warn("Token consume failed:", data.message);
+                        // Redirect if out of tokens
+                        if (data.tokens === 0) {
+                            alert("You have no tokens remaining. Redirecting to directory.");
+                            window.location.href = 'directory.html';
+                        }
+                    }
+                })
+                .catch(err => console.error("Token API error", err));
         }
 
         function getQueryParam(param) {
