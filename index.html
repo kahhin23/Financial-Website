@@ -366,7 +366,7 @@
             });
 
             // Mock Login
-            $('#loginForm').on('submit', function(e) {
+            $('#loginForm').on('submit', function (e) {
                 e.preventDefault();
 
                 const email = $('#email').val().trim();
@@ -382,55 +382,21 @@
                 const originalText = btn.text();
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_w4zEO3E8Ryhgi0aUPfDgIg7NBNScWfJzVmNGa5qmbgSU31oyfOLdc45OkuM1-tPC/exec";
+                // Mock Login Logic (No backend verification)
+                // Just store the entered email/type to simulate a session
+                const mockUser = {
+                    email: email,
+                    type: type,
+                    timestamp: Date.now(),
+                    isMock: true
+                };
 
-                fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'cors',
-                    cache: 'no-cache',
-                    redirect: 'follow',
-                    body: new URLSearchParams({
-                        action:   "login",
-                        email:    email,
-                        password: password,
-                        type:     type   // ← add this if your GAS uses it
-                    }),
-                    headers: {
-                        "Content-Type": "text/plain;charset=UTF-8"  // Critical: makes it "simple request" → no OPTIONS preflight
-                    }
-                })
-                .then(response => {
-                    // Even with 200, sometimes GAS wraps in HTML → force JSON parse carefully
-                    return response.text().then(text => {
-                        try {
-                            return JSON.parse(text);
-                        } catch (e) {
-                            console.error("Not JSON:", text);
-                            throw new Error("Invalid response from server");
-                        }
-                    });
-                })
-                .then(data => {
-                    console.log("Full response data:", data);
-                    if (data.success) {
-                        localStorage.setItem('fraxyUser', JSON.stringify({
-                            email: data.email || email,
-                            type: data.userType || type,
-                            tokens: data.tokens,
-                            lastCheck: Date.now()
-                        }));
-                        window.location.href = 'directory.html';
-                    } else {
-                        alert(data.message || "Login failed");
-                    }
-                })
-                .catch(err => {
-                    console.error("Fetch error:", err);
-                    alert("Login error: " + (err.message || "Connection issue"));
-                })
-                .finally(() => {
-                    btn.prop('disabled', false).text(originalText);
-                });
+                localStorage.setItem('fraxyUser', JSON.stringify(mockUser));
+
+                // Simulating network delay for better UX
+                setTimeout(function () {
+                    window.location.href = 'directory.html';
+                }, 800);
             });
         });
     </script>
