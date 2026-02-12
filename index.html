@@ -393,7 +393,10 @@
                         action:   "login",
                         email:    email,
                         password: password
-                    })
+                    }),
+                    headers: {
+                        "Content-Type": "text/plain;charset=UTF-8"   // ← this is the key change
+                    }
                 })
                 .then(r => r.json())
                 .then(data => {
