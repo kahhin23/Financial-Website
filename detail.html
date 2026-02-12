@@ -207,11 +207,9 @@
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
-                mode: 'cors',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                action: "consumeToken",
-                email: user.email
+                body: new URLSearchParams({
+                    action: "consumeToken",
+                    email:  user.email
                 })
             })
             .then(r => r.json())

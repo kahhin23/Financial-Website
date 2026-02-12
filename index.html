@@ -386,12 +386,10 @@
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                    action: "login",
-                    email: email,
-                    password: password
+                    body: new URLSearchParams({
+                        action:   "login",
+                        email:    email,
+                        password: password
                     })
                 })
                 .then(r => r.json())
