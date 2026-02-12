@@ -207,6 +207,9 @@
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
+                mode: 'cors',               
+                credentials: 'omit',       
+                redirect: 'follow',
                 body: new URLSearchParams({
                     action: "consumeToken",
                     email:  user.email
