@@ -382,7 +382,7 @@
                 const originalText = btn.text();
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_ID_HERE/exec";   // ← paste your URL
+                const SCRIPT_URL = "https://script.google.com/a/macros/starsplash.com.my/s/AKfycbwjXi65w4m9nqNkcPvTDEzlBvoStszpY8ggU_qVutOGvTQ050jJsRpG_1HROvf3ptaCng/exec";
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -394,6 +394,7 @@
                 })
                 .then(r => r.json())
                 .then(data => {
+                    console.log("Response:", data);
                     if (data.success) {
                     localStorage.setItem('fraxyUser', JSON.stringify({
                         email: data.email,

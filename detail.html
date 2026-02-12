@@ -174,7 +174,7 @@
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/a/macros/starsplash.com.my/s/AKfycbxvtlB5RtGcSGq5jb_D8mABhTQKpx--0EkvcPawUrqWqS_pZs2KZMMUMxXN02j8lUlQYw/exec";
+        const SCRIPT_URL = "https://script.google.com/a/macros/starsplash.com.my/s/AKfycbwjXi65w4m9nqNkcPvTDEzlBvoStszpY8ggU_qVutOGvTQ050jJsRpG_1HROvf3ptaCng/exec";
         const config = {
             investor: {
                 url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/working.csv',
@@ -214,6 +214,7 @@
             })
             .then(r => r.json())
             .then(data => {
+                console.log("Consume response:", data);
                 if (data.success) {
                 user.tokens = data.tokens;
                 localStorage.setItem('fraxyUser', JSON.stringify(user));
