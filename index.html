@@ -382,41 +382,53 @@
                 const originalText = btn.text();
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyVSZOaq6MS4BY-z0iM6PJFij1PEqFRxte7Af-O1Qxh4WLnYaXoKAkdE9JCEtvIGKQvww/exec";
+                const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx_w4zEO3E8Ryhgi0aUPfDgIg7NBNScWfJzVmNGa5qmbgSU31oyfOLdc45OkuM1-tPC/exec";
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
-                    mode: 'cors',               
-                    credentials: 'omit',        
+                    mode: 'cors',
+                    cache: 'no-cache',
                     redirect: 'follow',
                     body: new URLSearchParams({
                         action:   "login",
                         email:    email,
-                        password: password
+                        password: password,
+                        type:     type   // ← add this if your GAS uses it
                     }),
                     headers: {
-                        "Content-Type": "text/plain;charset=UTF-8"   // ← this is the key change
+                        "Content-Type": "text/plain;charset=UTF-8"  // Critical: makes it "simple request" → no OPTIONS preflight
                     }
                 })
-                .then(r => r.json())
+                .then(response => {
+                    // Even with 200, sometimes GAS wraps in HTML → force JSON parse carefully
+                    return response.text().then(text => {
+                        try {
+                            return JSON.parse(text);
+                        } catch (e) {
+                            console.error("Not JSON:", text);
+                            throw new Error("Invalid response from server");
+                        }
+                    });
+                })
                 .then(data => {
-                    console.log("Response:", data);
+                    console.log("Full response data:", data);
                     if (data.success) {
-                    localStorage.setItem('fraxyUser', JSON.stringify({
-                        email: data.email,
-                        type: data.userType,
-                        tokens: data.tokens,
-                        lastCheck: Date.now()
-                    }));
-                    window.location.href = 'directory.html';
+                        localStorage.setItem('fraxyUser', JSON.stringify({
+                            email: data.email || email,
+                            type: data.userType || type,
+                            tokens: data.tokens,
+                            lastCheck: Date.now()
+                        }));
+                        window.location.href = 'directory.html';
                     } else {
-                    alert(data.message || "Login failed");
-                    btn.prop('disabled', false).text(originalText);
+                        alert(data.message || "Login failed");
                     }
                 })
                 .catch(err => {
-                    console.error(err);
-                    alert("Connection error. Please try again.");
+                    console.error("Fetch error:", err);
+                    alert("Login error: " + (err.message || "Connection issue"));
+                })
+                .finally(() => {
                     btn.prop('disabled', false).text(originalText);
                 });
             });
