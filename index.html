@@ -366,26 +366,55 @@
             });
 
             // Mock Login
-            $('#loginForm').on('submit', function (e) {
+            $('#loginForm').on('submit', function(e) {
                 e.preventDefault();
+
+                const email = $('#email').val().trim();
+                const password = $('#password').val();
                 const type = $('#loginType').val();
+
+                if (!email || !password) {
+                    alert("Please enter email and password");
+                    return;
+                }
+
                 const btn = $('#submitBtn');
                 const originalText = btn.text();
+                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                // Loading State
-                btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Logging in...');
+                const SCRIPT_URL = "https://script.google.com/macros/s/YOUR_ID_HERE/exec";   // ← paste your URL
 
-                // Simulate Request
-                setTimeout(() => {
-                    // Store session (mock)
-                    localStorage.setItem('currentUserType', type);
-                    localStorage.setItem('isLoggedIn', 'true');
-
-                    // Redirect
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                    action: "login",
+                    email: email,
+                    password: password
+                    })
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                    localStorage.setItem('fraxyUser', JSON.stringify({
+                        email: data.email,
+                        type: data.userType,
+                        tokens: data.tokens,
+                        lastCheck: Date.now()
+                    }));
                     window.location.href = 'directory.html';
-                }, 1500);
+                    } else {
+                    alert(data.message || "Login failed");
+                    btn.prop('disabled', false).text(originalText);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Connection error. Please try again.");
+                    btn.prop('disabled', false).text(originalText);
+                });
             });
-
         });
     </script>
 </body>
