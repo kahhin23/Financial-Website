@@ -192,20 +192,40 @@
         };
 
         function consumeTokenIfInvestorViewingProject() {
-            const userStr = localStorage.getItem('fraxyUser');
-            if (!userStr) return;
-
-            const user = JSON.parse(userStr);
-            if (user.type !== 'investor') return;
-
             // Only consume when viewing a project
             const urlParams = new URLSearchParams(window.location.search);
             const type = urlParams.get('type') || 'investor';
-
             if (type !== 'project') return;
 
-            // Mock Token Consumption
-            console.log("Mock Mode: Token consumption skipped.");
+            // Token Consumption with localStorage (persists across refreshes!)
+            const userStr = localStorage.getItem('fraxyUser');
+            if (!userStr) return;
+
+            let user = JSON.parse(userStr);
+
+            // Only investors have limited tokens
+            if (user.type !== 'investor') {
+                console.log('Non-investor: unlimited access');
+                return;
+            }
+
+            // Check current tokens
+            if (user.tokens <= 0) {
+                alert('You have no tokens remaining. Please contact support to get more tokens.');
+                window.location.href = 'directory.html';
+                return;
+            }
+
+            // Decrement token
+            user.tokens--;
+            localStorage.setItem('fraxyUser', JSON.stringify(user));
+
+            console.log(`Token consumed. Remaining tokens: ${user.tokens}`);
+
+            // Show token count to user (optional)
+            if (user.tokens <= 3) {
+                console.warn(`⚠️ Low tokens: Only ${user.tokens} remaining!`);
+            }
         }
 
         function getQueryParam(param) {

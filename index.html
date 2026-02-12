@@ -382,21 +382,62 @@
                 const originalText = btn.text();
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                // Mock Login Logic (No backend verification)
-                // Just store the entered email/type to simulate a session
-                const mockUser = {
-                    email: email,
-                    type: type,
-                    timestamp: Date.now(),
-                    isMock: true
-                };
+                // Load and validate against users.csv from GitHub
+                const USERS_CSV_URL = 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/users.csv';
 
-                localStorage.setItem('fraxyUser', JSON.stringify(mockUser));
+                Papa.parse(USERS_CSV_URL, {
+                    download: true,
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function (results) {
+                        const users = results.data;
 
-                // Simulating network delay for better UX
-                setTimeout(function () {
-                    window.location.href = 'directory.html';
-                }, 800);
+                        // Find matching user
+                        const user = users.find(u =>
+                            u.Email && u.Email.trim().toLowerCase() === email.toLowerCase()
+                        );
+
+                        if (!user) {
+                            alert('User not found. Please check your email.');
+                            btn.prop('disabled', false).text(originalText);
+                            return;
+                        }
+
+                        // Validate password
+                        if (user.Password !== password) {
+                            alert('Incorrect password. Please try again.');
+                            btn.prop('disabled', false).text(originalText);
+                            return;
+                        }
+
+                        // Validate user type
+                        if (user.UserType !== type) {
+                            alert(`Invalid login type. This account is registered as "${user.UserType}". Please select the correct login type.`);
+                            btn.prop('disabled', false).text(originalText);
+                            return;
+                        }
+
+                        // Successful login - store in localStorage
+                        const userData = {
+                            email: user.Email,
+                            type: user.UserType,
+                            tokens: parseInt(user.Tokens) || 0,
+                            loginTime: Date.now()
+                        };
+
+                        localStorage.setItem('fraxyUser', JSON.stringify(userData));
+
+                        // Redirect to directory
+                        setTimeout(() => {
+                            window.location.href = 'directory.html';
+                        }, 500);
+                    },
+                    error: function (err) {
+                        console.error('Error loading users.csv:', err);
+                        alert('Error loading user database. Please try again.');
+                        btn.prop('disabled', false).text(originalText);
+                    }
+                });
             });
         });
     </script>
