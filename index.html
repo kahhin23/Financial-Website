@@ -382,7 +382,7 @@
                 const originalText = btn.text();
                 btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Logging in...');
 
-                const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzB6_eSGwHBs-wZF-UyX7l1YsOTdjGGEqceX-U4aeNDO-bk1fAW6DGFOkZoyZdcQlF7/exec";
+                const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbweFMU8XBrMYt8Tp9K6nxwZzg1M_BhUUGw0DfcRkbXWRDbzonNwFlBBI5mQkjONeTQb/exec";
 
                 fetch(SCRIPT_URL, {
                     method: 'POST',
@@ -392,14 +392,7 @@
                         password: password
                     })
                 })
-                .then(response => {
-                    if (!response.ok) {
-                    // It's good practice to handle non-2xx responses.
-                    // If the server sends HTML for a 404, this would catch it before .json()
-                    return response.text().then(text => { throw new Error(`HTTP error! Status: ${response.status}. Response: ${text}`); });
-                    }
-                    return response.json();
-                })
+                .then(r => r.json())
                 .then(data => {
                     console.log("Response:", data);
                     if (data.success) {
