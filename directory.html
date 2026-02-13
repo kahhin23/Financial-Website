@@ -55,9 +55,18 @@
   <div class="container my-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="fw-bold mb-0">Fraxy Match Deal Making 2026</h1>
-      <a href="index.html" class="btn btn-outline-danger btn-sm">
-        <i class="bi bi-box-arrow-right me-1"></i> Logout
-      </a>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Token Display (only for investors) -->
+        <div id="tokenDisplay" style="display: none;">
+          <span class="badge bg-primary" style="font-size: 1rem; padding: 0.5rem 1rem;">
+            <i class="bi bi-coin me-2"></i>
+            Tokens: <span id="tokenCount">0</span>
+          </span>
+        </div>
+        <a href="index.html" class="btn btn-outline-danger btn-sm">
+          <i class="bi bi-box-arrow-right me-1"></i> Logout
+        </a>
+      </div>
     </div>
 
     <!-- Navigation Tabs -->
@@ -423,22 +432,47 @@
       });
     }
 
+    // Function to refresh token display from localStorage
+    function refreshTokenDisplay() {
+      const userStr = localStorage.getItem('fraxyUser');
+      if (userStr) {
+        const user = JSON.parse(userStr);
+        if (user.type === 'investor') {
+          $('#tokenCount').text(user.tokens);
+          $('#tokenDisplay').show();
+        }
+      }
+    }
+
     // Init
     $(document).ready(function () {
+      // Display token count for investors
+      refreshTokenDisplay();
+
+      // Refresh token count when page becomes visible (e.g., returning from detail page)
+      document.addEventListener('visibilitychange', function () {
+        if (!document.hidden) {
+          refreshTokenDisplay();
+        }
+      });
+
+      // Also refresh on window focus (backup for some browsers)
+      window.addEventListener('focus', refreshTokenDisplay);
+
       // Tab Click
       $('#viewTabs .nav-link').on('click', function (e) {
         e.preventDefault();
         const view = $(this).data('view');
         loadView(view);
       });
-
-      // Filter Events
-      $('#searchInput').on('input', applyFilters);
-      $('#typeFilter, #sectorFilter').on('change', applyFilters);
-
-      // Initial Load
-      loadView('investors');
     });
+
+    // Filter Events
+    $('#searchInput').on('input', applyFilters);
+    $('#typeFilter, #sectorFilter').on('change', applyFilters);
+
+    // Initial Load
+    loadView('investors');
   </script>
 </body>
 
