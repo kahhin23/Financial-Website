@@ -421,9 +421,15 @@
 
                         localStorage.setItem('fraxyUser', JSON.stringify(userData));
 
-                        // Redirect to directory
+                        // Redirect based on user type
                         setTimeout(() => {
-                            window.location.href = 'directory.html';
+                            if (type === 'project') {
+                                window.location.href = 'project-dashboard.html';
+                            } else if (type === 'professional') {
+                                window.location.href = 'professional-dashboard.html';
+                            } else {
+                                window.location.href = 'directory.html';
+                            }
                         }, 500);
                     },
                     error: function (err) {

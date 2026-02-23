@@ -191,11 +191,11 @@
             }
         };
 
-        function consumeTokenIfInvestorViewingProject() {
-            // Only consume when viewing a project
+        function consumeTokenIfInvestorViewingContent() {
+            // Only consume token when an investor is viewing investor-related content
             const urlParams = new URLSearchParams(window.location.search);
             const type = urlParams.get('type') || 'investor';
-            if (type !== 'project') return;
+            if (type !== 'investor') return;
 
             // Token Consumption with localStorage (persists across refreshes!)
             const userStr = localStorage.getItem('fraxyUser');
@@ -392,7 +392,7 @@
 
             $('#loading').hide();
             $('#activeContent').fadeIn();
-            consumeTokenIfInvestorViewingProject();
+            consumeTokenIfInvestorViewingContent();
         }
 
         // Load Data
