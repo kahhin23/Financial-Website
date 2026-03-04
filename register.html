@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Fraxy Match Deal Making 2026</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .login-header {
+            background: transparent;
+            padding: 2rem 2rem 1rem;
+            text-align: center;
+        }
+
+        .brand-title {
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .nav-pills .nav-link.active {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-pills .nav-link.active[data-type="investor"] {
+            background-color: #0d6efd;
+            color: white;
+        }
+
+        .nav-pills .nav-link.active[data-type="project"] {
+            background-color: #198754;
+            color: white;
+        }
+
+        .nav-pills .nav-link.active[data-type="professional"] {
+            background-color: #6610f2;
+            color: white;
+        }
+
+        .login-body {
+            padding: 2rem;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #dee2e6;
+            background-color: #f8f9fa;
+        }
+
+        .form-control:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+        }
+
+        .btn-login {
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: transform 0.15s;
+        }
+
+        .btn-login:active {
+            transform: scale(0.98);
+        }
+
+        .btn-investor {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+            color: white;
+        }
+
+        .btn-investor:hover {
+            background-color: #0b5ed7;
+            border-color: #0a58ca;
+            color: white;
+        }
+
+        .btn-project {
+            background-color: #198754;
+            border-color: #198754;
+            color: white;
+        }
+
+        .btn-project:hover {
+            background-color: #157347;
+            border-color: #146c43;
+            color: white;
+        }
+
+        .btn-professional {
+            background-color: #6610f2;
+            border-color: #6610f2;
+            color: white;
+        }
+
+        .btn-professional:hover {
+            background-color: #5d0ce1;
+            border-color: #550bc6;
+            color: white;
+        }
+
+        .identity-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+            padding: 10px;
+            border-radius: 50%;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .icon-investor {
+            background-color: rgba(13, 110, 253, 0.1);
+            color: #0d6efd;
+        }
+
+        .icon-project {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: #198754;
+        }
+
+        .icon-professional {
+            background-color: rgba(102, 16, 242, 0.1);
+            color: #6610f2;
+        }
+
+        .identity-section {
+            border-top: 1px solid #eee;
+            padding-top: 1.5rem;
+        }
+
+        .login-card {
+            max-width: 600px;
+            /* Wider for better field layout */
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-12">
+
+                <div class="login-card mx-auto">
+                    <div class="login-header">
+                        <h4 class="brand-title">Create Account</h4>
+                        <p class="text-muted small mb-4">Join Fraxy Match Deal Making 2026</p>
+
+                        <!-- Identity Tabs -->
+                        <ul class="nav nav-pills nav-fill gap-2" id="identityTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="investor-tab" data-bs-toggle="pill"
+                                    data-bs-target="#investor" type="button" role="tab" aria-selected="true"
+                                    data-type="investor">
+                                    Investor
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="project-tab" data-bs-toggle="pill"
+                                    data-bs-target="#project" type="button" role="tab" aria-selected="false"
+                                    data-type="project">
+                                    Project
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="professional-tab" data-bs-toggle="pill"
+                                    data-bs-target="#professional" type="button" role="tab" aria-selected="false"
+                                    data-type="professional">
+                                    Professional
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="login-body pt-0">
+                        <div class="tab-content" id="identityTabsContent">
+
+                            <!-- Identity Header -->
+                            <div class="text-center mb-4" id="identityHeader">
+                                <div class="identity-icon icon-investor" id="identityIcon">
+                                    <i class="bi bi-graph-up-arrow"></i>
+                                </div>
+                                <h5 id="formTitle">Register as Investor</h5>
+                                <p class="text-muted small">Begin your investment journey here.</p>
+                            </div>
+
+                            <form id="registerForm">
+                                <input type="hidden" id="registerType" name="type" value="investor">
+
+                                <!-- Personal Information -->
+                                <div class="row g-3 mb-4">
+                                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-person me-2"></i>Personal
+                                        Information</h6>
+                                    <div class="col-md-6">
+                                        <label for="firstName" class="form-label small text-muted fw-bold">First
+                                            Name</label>
+                                        <input type="text" class="form-control" id="firstName" placeholder="John"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="lastName" class="form-label small text-muted fw-bold">Last
+                                            Name</label>
+                                        <input type="text" class="form-control" id="lastName" placeholder="Doe"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="title" class="form-label small text-muted fw-bold">Title</label>
+                                        <input type="text" class="form-control" id="title"
+                                            placeholder="e.g. CEO, Manager" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="preferredLanguage"
+                                            class="form-label small text-muted fw-bold">Preferred Language</label>
+                                        <select class="form-select" id="preferredLanguage" required>
+                                            <option value="" selected disabled>Select</option>
+                                            <option>English</option>
+                                            <option>Chinese</option>
+                                            <option>Other</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="email" class="form-label small text-muted fw-bold">Business
+                                            Email</label>
+                                        <input type="email" class="form-control" id="email"
+                                            placeholder="name@company.com" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="password"
+                                            class="form-label small text-muted fw-bold">Password</label>
+                                        <input type="password" class="form-control" id="password" placeholder="••••••••"
+                                            required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confirmPassword" class="form-label small text-muted fw-bold">Confirm
+                                            Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword"
+                                            placeholder="••••••••" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="mobilePhone" class="form-label small text-muted fw-bold">Mobile
+                                            Phone</label>
+                                        <input type="tel" class="form-control" id="mobilePhone"
+                                            placeholder="+852 9000 0000" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="discoverySource" class="form-label small text-muted fw-bold">Where
+                                            did you hear about us?</label>
+                                        <select class="form-select" id="discoverySource" required>
+                                            <option value="" selected disabled>Choose source</option>
+                                            <option>Email</option>
+                                            <option>LinkedIn</option>
+                                            <option>Other Social Media</option>
+                                            <option>Friends</option>
+                                            <option>Search Engine</option>
+                                            <option value="Other">Other (Please Specify)</option>
+                                        </select>
+                                        <input type="text" class="form-control mt-2 d-none" id="discoveryOther"
+                                            placeholder="Please specify...">
+                                    </div>
+                                </div>
+
+                                <!-- Company Information -->
+                                <div class="row g-3 mb-4">
+                                    <h6 class="fw-bold mb-0 text-primary"><i class="bi bi-building me-2"></i>Company
+                                        Information</h6>
+                                    <div class="col-md-12">
+                                        <label for="companyName" class="form-label small text-muted fw-bold">Company
+                                            Name (Match with BR)</label>
+                                        <input type="text" class="form-control" id="companyName" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="companyLocation" class="form-label small text-muted fw-bold">Company
+                                            Location</label>
+                                        <input type="text" class="form-control" id="companyLocation" required>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="companyDescription"
+                                            class="form-label small text-muted fw-bold">Company Description (< 150
+                                                words)</label>
+                                                <textarea class="form-control" id="companyDescription" rows="3"
+                                                    required></textarea>
+                                                <div class="form-text small text-end" id="wordCount">0 / 150 words</div>
+                                    </div>
+                                </div>
+
+                                <!-- Identity Specific Sections -->
+                                <div id="investorSpecific" class="identity-section mb-4">
+                                    <h6 class="fw-bold mb-3 text-primary"><i
+                                            class="bi bi-shield-check me-2"></i>Investor Profile</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold">Investor Type</label>
+                                        <select class="form-select" id="investorType">
+                                            <option value="" selected disabled>Select Type</option>
+                                            <option>Accelerator</option>
+                                            <option>Angel Investor</option>
+                                            <option>Family Office</option>
+                                            <option>Incubator</option>
+                                            <option>Institutional Investor</option>
+                                            <option>Private Equity</option>
+                                            <option>Venture Capital</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold d-block">Investment
+                                            Geographical Preference</label>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="Asia"><label
+                                                        class="form-check-label small">Asia</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="Europe"><label
+                                                        class="form-check-label small">Europe</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="North America"><label
+                                                        class="form-check-label small">North America</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="Middle East"><label
+                                                        class="form-check-label small">Middle East</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="Australasia"><label
+                                                        class="form-check-label small">Australasia</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="Africa"><label
+                                                        class="form-check-label small">Africa</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="geoPref" value="South America"><label
+                                                        class="form-check-label small">South America</label></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold d-block">Investment
+                                            Round</label>
+                                        <div class="row g-2">
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="Seed & Pre-Series A"><label
+                                                        class="form-check-label small">Seed & Pre-Series A</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="Series A"><label
+                                                        class="form-check-label small">Series A</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="Series B"><label
+                                                        class="form-check-label small">Series B</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="Series C and Beyond"><label
+                                                        class="form-check-label small">Series C and Beyond</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="IPO"><label
+                                                        class="form-check-label small">IPO</label></div>
+                                            </div>
+                                            <div class="col-6">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorRound" value="Post IPO"><label
+                                                        class="form-check-label small">Post IPO</label></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold d-block">Investment Amount
+                                            Range</label>
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="500,000 USD or below"><label
+                                                        class="form-check-label small">500,000 USD or below</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="500,001 to 1,000,000 USD"><label
+                                                        class="form-check-label small">500,001 to 1,000,000 USD</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="1,000,001 to 2,500,000 USD"><label
+                                                        class="form-check-label small">1,000,001 to 2,500,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="2,500,001 to 5,000,000 USD"><label
+                                                        class="form-check-label small">2,500,001 to 5,000,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="5,000,001 to 7,500,000 USD"><label
+                                                        class="form-check-label small">5,000,001 to 7,500,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="7,500,001 to 10,000,000 USD"><label
+                                                        class="form-check-label small">7,500,001 to 10,000,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount"
+                                                        value="10,000,001 to 25,000,000 USD"><label
+                                                        class="form-check-label small">10,000,001 to 25,000,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount"
+                                                        value="25,000,001 to 50,000,000 USD"><label
+                                                        class="form-check-label small">25,000,001 to 50,000,000
+                                                        USD</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorAmount" value="50,000,001 USD or above"><label
+                                                        class="form-check-label small">50,000,001 USD or above</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold d-block">Targeted Investment
+                                            Sectors</label>
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Financial Technology"><label
+                                                        class="form-check-label small">Financial Technology</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Deep Technology"><label
+                                                        class="form-check-label small">Deep Technology</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors"
+                                                        value="Environment, Energy and Clean Technology"><label
+                                                        class="form-check-label small">Environment, Energy and Clean
+                                                        Technology</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Healthcare Technology"><label
+                                                        class="form-check-label small">Healthcare Technology</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors"
+                                                        value="Consumer and Consumer Technology"><label
+                                                        class="form-check-label small">Consumer and Consumer
+                                                        Technology</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors"
+                                                        value="Digital Entertainment and Media"><label
+                                                        class="form-check-label small">Digital Entertainment and
+                                                        Media</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Manufacturing Technology"><label
+                                                        class="form-check-label small">Manufacturing Technology</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors"
+                                                        value="Infrastructure and Real Estate Services"><label
+                                                        class="form-check-label small">Infrastructure and Real Estate
+                                                        Services</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Food and Agriculture"><label
+                                                        class="form-check-label small">Food and Agriculture</label>
+                                                </div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Education"><label
+                                                        class="form-check-label small">Education</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors" value="Logistics & Transportation"><label
+                                                        class="form-check-label small">Logistics &
+                                                        Transportation</label></div>
+                                            </div>
+                                            <div class="col-12">
+                                                <div class="form-check"><input class="form-check-input" type="checkbox"
+                                                        name="investorSectors"
+                                                        value="Business & Professional Services"><label
+                                                        class="form-check-label small">Business & Professional
+                                                        Services</label></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold">ESG Preference</label>
+                                        <select class="form-select" id="investorESG">
+                                            <option value="" selected disabled>Select Preference</option>
+                                            <option>Agnostic</option>
+                                            <option>Risk-Managed</option>
+                                            <option>Transition-Ready</option>
+                                            <option>Positive Screening</option>
+                                            <option>Impact Mandate</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div id="projectSpecific" class="identity-section mb-4 d-none">
+                                    <h6 class="fw-bold mb-3 text-primary"><i
+                                            class="bi bi-rocket-takeoff me-2"></i>Project Details</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold">Corporate Type</label>
+                                        <select class="form-select" id="corporateType">
+                                            <option value="" selected disabled>Select Type</option>
+                                            <option>Startups</option>
+                                            <option>Micro Enterprise ( Employees < 10 AND Turnover < USD2m )</option>
+                                            <option>Small Enterprise ( Employees < 50 AND Turnover < USD10m)</option>
+                                            <option>Medium Enterprise ( Employees < 250 AND Turnover < USD50m)</option>
+                                            <option value="Listed Company">Listed Company</option>
+                                        </select>
+                                    </div>
+                                    <div id="listedInfo" class="row g-2 d-none">
+                                        <div class="col-md-6">
+                                            <label for="listingLocation"
+                                                class="form-label small text-muted fw-bold">Listing Location</label>
+                                            <input type="text" class="form-control" id="listingLocation">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="stockCode" class="form-label small text-muted fw-bold">Stock
+                                                Code</label>
+                                            <input type="text" class="form-control" id="stockCode">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="professionalSpecific" class="identity-section mb-4 d-none">
+                                    <h6 class="fw-bold mb-3 text-primary"><i
+                                            class="bi bi-briefcase me-2"></i>Professional Profile</h6>
+                                    <div class="mb-3">
+                                        <label class="form-label small text-muted fw-bold">Professional Type</label>
+                                        <select class="form-select" id="professionalType">
+                                            <option value="" selected disabled>Select Type</option>
+                                            <option>Lawyer (HK)</option>
+                                            <option>Lawyer (Non HK)</option>
+                                            <option>Auditor</option>
+                                            <option>Valuer</option>
+                                            <option>Corporate Finance (M&A)</option>
+                                            <option>Corporate Finance (Regulatory)</option>
+                                            <option>Asset Management</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="serviceTags" class="form-label small text-muted fw-bold">Service
+                                            Tags (Up to 10)</label>
+                                        <input type="text" class="form-control" id="serviceTags"
+                                            placeholder="Audit, IPO, Legal, etc. (Separate by comma)">
+                                        <div class="form-text small">Enter tags separated by commas.</div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="agreeTerms" required>
+                                        <label class="form-check-label small text-muted" for="agreeTerms">
+                                            I agree to the <a href="#" class="text-decoration-none">Terms of Service</a>
+                                            and <a href="#" class="text-decoration-none">Privacy Policy</a>.
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-login btn-investor w-100 mb-3" id="submitBtn">
+                                    Register Account
+                                </button>
+
+                                <div class="text-center">
+                                    <span class="text-muted small">Already have an account?</span>
+                                    <a href="index.html" class="text-decoration-none small fw-bold ms-1">Log in</a>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-center text-muted small mt-4 opacity-50">
+                    &copy; 2026 Fraxy Match. All rights reserved.
+                </p>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            // Tab Switching Logic
+            const config = {
+                investor: {
+                    title: 'Register as Investor',
+                    subtitle: 'Begin your investment journey here.',
+                    btnText: 'Register as Investor',
+                    btnClass: 'btn-investor',
+                    iconClass: 'icon-investor',
+                    icon: 'bi-graph-up-arrow'
+                },
+                project: {
+                    title: 'Register as Project Owner',
+                    subtitle: 'List your project and find funding.',
+                    btnText: 'Register as Project Owner',
+                    btnClass: 'btn-project',
+                    iconClass: 'icon-project',
+                    icon: 'bi-building-check'
+                },
+                professional: {
+                    title: 'Register as Professional',
+                    subtitle: 'Offer your expertise to the community.',
+                    btnText: 'Register as Professional',
+                    btnClass: 'btn-professional',
+                    iconClass: 'icon-professional',
+                    icon: 'bi-person-badge'
+                }
+            };
+
+            const resetClasses = () => {
+                $('#submitBtn').removeClass('btn-investor btn-project btn-professional');
+                $('#identityIcon').removeClass('icon-investor icon-project icon-professional');
+            };
+
+            $('button[data-bs-toggle="pill"]').on('shown.bs.tab', function (e) {
+                const type = $(e.target).data('type');
+                const data = config[type];
+
+                // Update Form UI with animation
+                $('#identityHeader').fadeOut(150, function () {
+                    $('#formTitle').text(data.title);
+                    $('#identityHeader p').text(data.subtitle);
+                    $('#identityIcon').removeClass().addClass(`identity-icon ${data.iconClass}`);
+                    $('#identityIcon i').removeClass().addClass(`bi ${data.icon}`);
+                    $(this).fadeIn(150);
+                });
+
+                // Update Button
+                resetClasses();
+                $('#submitBtn').addClass(data.btnClass).text(data.btnText);
+
+                // Show/Hide Identity-Specific Sections
+                $('.identity-section').addClass('d-none');
+                $(`#${type}Specific`).removeClass('d-none');
+
+                // Update Hidden Input
+                $('#registerType').val(type);
+            });
+
+            // Dynamic Visibility: Discovery Source
+            $('#discoverySource').on('change', function () {
+                if ($(this).val() === 'Other') {
+                    $('#discoveryOther').removeClass('d-none').prop('required', true);
+                } else {
+                    $('#discoveryOther').addClass('d-none').prop('required', false);
+                }
+            });
+
+            // Dynamic Visibility: Corporate Type (Listed Company)
+            $('#corporateType').on('change', function () {
+                if ($(this).val() === 'Listed Company') {
+                    $('#listedInfo').removeClass('d-none');
+                    $('#listingLocation, #stockCode').prop('required', true);
+                } else {
+                    $('#listedInfo').addClass('d-none');
+                    $('#listingLocation, #stockCode').prop('required', false);
+                }
+            });
+
+            // Word Count for Description
+            $('#companyDescription').on('input', function () {
+                const words = this.value.trim().split(/\s+/).filter(w => w.length > 0);
+                $('#wordCount').text(`${words.length} / 150 words`);
+                if (words.length > 150) {
+                    $('#wordCount').addClass('text-danger');
+                } else {
+                    $('#wordCount').removeClass('text-danger');
+                }
+            });
+
+            // Registration Logic
+            $('#registerForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const type = $('#registerType').val();
+
+                // Terms of Service Validation
+                if (!$('#agreeTerms').is(':checked')) {
+                    alert("Please agree to the Terms of Service and Privacy Policy.");
+                    return;
+                }
+
+                // Password Validation
+                if ($('#password').val() !== $('#confirmPassword').val()) {
+                    alert("Passwords do not match!");
+                    return;
+                }
+
+                // Description Word Count Check
+                const desc = $('#companyDescription').val().trim();
+                const wordCount = desc.split(/\s+/).filter(w => w.length > 0).length;
+                if (wordCount > 150) {
+                    alert("Company description exceeds 150 words!");
+                    return;
+                }
+
+                const email = $('#email').val().trim();
+                let localUsers = JSON.parse(localStorage.getItem('localUsers')) || [];
+
+                // Duplicate Check
+                if (localUsers.find(u => u.Email.toLowerCase() === email.toLowerCase())) {
+                    alert("An account with this email already exists!");
+                    return;
+                }
+
+                // Base Data Object
+                const newUser = {
+                    FirstName: $('#firstName').val().trim(),
+                    LastName: $('#lastName').val().trim(),
+                    Title: $('#title').val().trim(),
+                    PreferredLanguage: $('#preferredLanguage').val(),
+                    Email: email,
+                    Password: $('#password').val(),
+                    MobilePhone: $('#mobilePhone').val().trim(),
+                    DiscoverySource: $('#discoverySource').val() === 'Other' ? $('#discoveryOther').val() : $('#discoverySource').val(),
+                    CompanyName: $('#companyName').val().trim(),
+                    CompanyLocation: $('#companyLocation').val().trim(),
+                    CompanyDescription: desc,
+                    UserType: type,
+                    Tokens: type === 'investor' ? 10 : 0,
+                    CreatedAt: new Date().toISOString()
+                };
+
+                // Type-Specific Data
+                if (type === 'investor') {
+                    newUser.InvestorType = $('#investorType').val();
+                    newUser.GeoPreference = $('input[name="geoPref"]:checked').map(function () { return this.value; }).get();
+                    newUser.InvestmentRounds = $('input[name="investorRound"]:checked').map(function () { return this.value; }).get();
+                    newUser.InvestmentAmounts = $('input[name="investorAmount"]:checked').map(function () { return this.value; }).get();
+                    newUser.InvestmentSectors = $('input[name="investorSectors"]:checked').map(function () { return this.value; }).get();
+                    newUser.ESGPreference = $('#investorESG').val();
+                } else if (type === 'project') {
+                    newUser.CorporateType = $('#corporateType').val();
+                    if (newUser.CorporateType === 'Listed Company') {
+                        newUser.ListingLocation = $('#listingLocation').val().trim();
+                        newUser.StockCode = $('#stockCode').val().trim();
+                    }
+                } else if (type === 'professional') {
+                    newUser.ProfessionalType = $('#professionalType').val();
+                    newUser.ServiceTags = $('#serviceTags').val().split(',').map(s => s.trim()).filter(s => s.length > 0).slice(0, 10);
+                }
+
+                localUsers.push(newUser);
+                localStorage.setItem('localUsers', JSON.stringify(localUsers));
+
+                alert("Registration successful! You can now log in.");
+                window.location.href = 'index.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

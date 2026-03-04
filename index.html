@@ -278,7 +278,8 @@
 
                                 <div class="text-center">
                                     <span class="text-muted small">Don't have an account?</span>
-                                    <a href="#" class="text-decoration-none small fw-bold ms-1">Sign up</a>
+                                    <span class="text-muted small">Don't have an account?</span>
+                                    <a href="register.html" class="text-decoration-none small fw-bold ms-1">Sign up</a>
                                 </div>
                             </form>
 
@@ -386,6 +387,52 @@
                     complete: function (results) {
                         const users = results.data;
 
+                        // SUCCESS CALLBACK - Handle both CSV and Success logic
+                        const handleSuccess = (user) => {
+                            // Successful login - store in localStorage
+                            const userData = {
+                                email: user.Email,
+                                type: user.UserType,
+                                tokens: parseInt(user.Tokens) || 0,
+                                loginTime: Date.now()
+                            };
+
+                            localStorage.setItem('fraxyUser', JSON.stringify(userData));
+
+                            // Redirect based on user type
+                            setTimeout(() => {
+                                if (type === 'project') {
+                                    window.location.href = 'project-dashboard.html';
+                                } else if (type === 'professional') {
+                                    window.location.href = 'professional-dashboard.html';
+                                } else {
+                                    window.location.href = 'directory.html';
+                                }
+                            }, 500);
+                        };
+
+                        // 1. Check localUsers from localStorage first (for newly registered accounts)
+                        const localUsers = JSON.parse(localStorage.getItem('localUsers')) || [];
+                        const localUser = localUsers.find(u =>
+                            u.Email && u.Email.trim().toLowerCase() === email.toLowerCase()
+                        );
+
+                        if (localUser) {
+                            if (localUser.Password !== password) {
+                                alert('Incorrect password. Please try again.');
+                                btn.prop('disabled', false).text(originalText);
+                                return;
+                            }
+                            if (localUser.UserType !== type) {
+                                alert(`Invalid login type. This account is registered as "${localUser.UserType}". Please select the correct login type.`);
+                                btn.prop('disabled', false).text(originalText);
+                                return;
+                            }
+                            handleSuccess(localUser);
+                            return;
+                        }
+
+                        // 2. Fallback to users.csv
                         // Find matching user
                         const user = users.find(u =>
                             u.Email && u.Email.trim().toLowerCase() === email.toLowerCase()
@@ -411,26 +458,7 @@
                             return;
                         }
 
-                        // Successful login - store in localStorage
-                        const userData = {
-                            email: user.Email,
-                            type: user.UserType,
-                            tokens: parseInt(user.Tokens) || 0,
-                            loginTime: Date.now()
-                        };
-
-                        localStorage.setItem('fraxyUser', JSON.stringify(userData));
-
-                        // Redirect based on user type
-                        setTimeout(() => {
-                            if (type === 'project') {
-                                window.location.href = 'project-dashboard.html';
-                            } else if (type === 'professional') {
-                                window.location.href = 'professional-dashboard.html';
-                            } else {
-                                window.location.href = 'directory.html';
-                            }
-                        }, 500);
+                        handleSuccess(user);
                     },
                     error: function (err) {
                         console.error('Error loading users.csv:', err);
