@@ -814,7 +814,7 @@
                     CompanyLocation: $('#companyLocation').val().trim(),
                     CompanyDescription: desc,
                     UserType: type,
-                    Tokens: type === 'investor' ? 10 : 0,
+                    Tokens: 10, // All new accounts start with 10 tokens
                     CreatedAt: new Date().toISOString()
                 };
 

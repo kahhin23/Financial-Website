@@ -390,8 +390,10 @@
                         // SUCCESS CALLBACK - Handle both CSV and Success logic
                         const handleSuccess = (user) => {
                             // Successful login - store in localStorage
+                            // Spread the user object to keep all fields (FirstName, LastName, etc.)
                             const userData = {
-                                email: user.Email,
+                                ...user,
+                                email: user.Email, // Ensure lowercase keys for compatibility if needed
                                 type: user.UserType,
                                 tokens: parseInt(user.Tokens) || 0,
                                 loginTime: Date.now()
@@ -406,7 +408,7 @@
                                 } else if (type === 'professional') {
                                     window.location.href = 'professional-dashboard.html';
                                 } else {
-                                    window.location.href = 'directory.html';
+                                    window.location.href = 'investor-dashboard.html';
                                 }
                             }, 500);
                         };
