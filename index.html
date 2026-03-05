@@ -30,20 +30,10 @@
             font-family: 'Outfit', sans-serif;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 2rem 1rem;
+            padding: 2rem 0;
             overflow-x: hidden;
-        }
-
-        .credits {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 2rem;
-            margin: 0;
-            text-align: right;
-            z-index: 10;
         }
 
         /* Ambient Background Shapes */
@@ -262,14 +252,16 @@
         /* Icon styling */
         .identity-icon {
             font-size: 1.8rem;
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 18px;
+            border-radius: 20px;
             margin: 0 auto 1.5rem;
             transition: all 0.4s ease;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
         }
 
         .icon-investor {
@@ -282,22 +274,8 @@
             color: var(--primary-green);
         }
 
-        border: 1px solid var(--glass-border);
-        box-shadow: 0 8px 15px var(--shadow-medium);
-        }
-
-        .icon-investor {
-            background: rgba(13, 110, 253, 0.15);
-            color: var(--primary-blue);
-        }
-
-        .icon-project {
-            background: rgba(25, 135, 84, 0.15);
-            color: var(--primary-green);
-        }
-
         .icon-professional {
-            background: rgba(102, 16, 242, 0.15);
+            background: rgba(102, 16, 242, 0.1);
             color: var(--primary-purple);
         }
     </style>
@@ -392,8 +370,8 @@
         </div>
     </div>
 
-    <div class="credits text-muted small opacity-50">
-        &copy; 2026 Fraxy Match. All rights reserved.
+    <div class="position-fixed bottom-0 end-0 p-4 opacity-50" style="z-index: 1000;">
+        <p class="text-muted small mb-0">&copy; 2026 Fraxy Match. All rights reserved.</p>
     </div>
 
     <!-- Scripts -->

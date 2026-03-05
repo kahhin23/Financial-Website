@@ -31,20 +31,10 @@
             font-family: 'Outfit', sans-serif;
             min-height: 100vh;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 4rem 1rem;
             overflow-x: hidden;
-        }
-
-        .credits {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 2rem;
-            margin: 0;
-            text-align: right;
-            z-index: 10;
         }
 
         .ambient-bg {
@@ -710,8 +700,8 @@
         </div>
     </div>
 
-    <div class="credits text-muted small opacity-50">
-        &copy; 2026 Fraxy Match. All rights reserved.
+    <div class="position-fixed bottom-0 end-0 p-4 opacity-50" style="z-index: 1000;">
+        <p class="text-muted small mb-0">&copy; 2026 Fraxy Match. All rights reserved.</p>
     </div>
 
     <!-- Scripts -->
