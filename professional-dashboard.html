@@ -2,32 +2,651 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Professional Dashboard - Fraxy Match Deal Making 2026</title>
+
     <!-- Bootstrap 5.3 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <style>
+        :root {
+            --theme-primary: #6610f2;
+            --theme-gradient: linear-gradient(135deg, #6610f2 0%, #520dc2 100%);
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+            border-color: var(--theme-primary);
+        }
+
+        .card-title {
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+
+        .badge {
+            font-weight: 600;
+            border-radius: 6px;
+            padding: 0.4em 0.8em;
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+            border-radius: 50px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            margin: 0 0.25rem;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--theme-gradient);
+            box-shadow: 0 4px 15px rgba(102, 16, 242, 0.3);
+            color: white;
+        }
+
+        .nav-pills .nav-link:not(.active):hover {
+            background: rgba(102, 16, 242, 0.05);
+            border-color: rgba(102, 16, 242, 0.2);
+            color: var(--theme-primary);
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            min-width: 300px;
+            max-width: 300px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            border-right: 1px solid var(--glass-border);
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 80px;
+            overflow-y: auto;
+            z-index: 900;
+            scrollbar-width: thin;
+            padding: 1.5rem;
+        }
+
+        #sidebar.active {
+            margin-left: -300px;
+        }
+
+        .wrapper {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        #content {
+            width: 100%;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            border: 1px solid #dee2e6;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 4px rgba(102, 16, 242, 0.1);
+            background-color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                height: 100vh;
+                top: 0;
+                margin-left: -300px;
+            }
+
+            #sidebar.active {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="mb-4">Professional Dashboard</h1>
-        <p class="fs-4 text-muted">This page is under Professional account category.</p>
-        <a href="index.html" class="btn btn-outline-danger mt-4">
-            Logout
-        </a>
+
+    <header class="dashboard-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" id="sidebarCollapse" class="btn btn-light shadow-sm border rounded-circle"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-filter"></i>
+                </button>
+                <span class="h4 fw-bold mb-0 text-dark">Fraxy Match</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div id="tokenDisplay" style="display: none;">
+                    <div class="badge bg-white text-dark shadow-sm border d-flex align-items-center gap-2"
+                        style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-coin text-warning"></i>
+                        <span>Tokens: <strong id="tokenCount" class="text-primary"
+                                style="color: var(--theme-primary) !important;">0</strong></span>
+                    </div>
+                </div>
+                <a href="profile-management.html" class="btn btn-light shadow-sm border btn-sm rounded-pill px-3">
+                    <i class="bi bi-person me-1"></i> Profile
+                </a>
+                <a href="index.html" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="active">
+            <div class="p-4" id="filterContainer">
+                <!-- Project Filters -->
+                <div id="projectFilters" class="filter-section">
+                    <h5 class="fw-bold mb-3">Project Filters</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Search Keywords</label>
+                        <input type="text" id="projectSearchInput" class="form-control" placeholder="Keywords...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location</label>
+                        <select id="projectLocationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Sector</label>
+                        <select id="projectSectorFilter" class="form-select">
+                            <option value="">All Sectors</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Round</label>
+                        <select id="projectRoundFilter" class="form-select">
+                            <option value="">All Rounds</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Capital Range</label>
+                        <select id="projectCapitalFilter" class="form-select">
+                            <option value="">All Ranges</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Cooperation Type</label>
+                        <select id="projectCooperationTypeFilter" class="form-select">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Format</label>
+                        <select id="projectFormatFilter" class="form-select">
+                            <option value="">All Formats</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Financing</label>
+                        <select id="projectFinancingFilter" class="form-select">
+                            <option value="">All Structures</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">ESG Target</label>
+                        <select id="projectESGFilter" class="form-select">
+                            <option value="">All Targets</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Professional Filters -->
+                <div id="professionalFilters" class="filter-section" style="display: none;">
+                    <h5 class="fw-bold mb-3">Professional Filters</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Search Keywords</label>
+                        <input type="text" id="professionalSearchInput" class="form-control"
+                            placeholder="Keywords/Tags...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location</label>
+                        <select id="professionalLocationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Type</label>
+                        <select id="professionalTypeFilter" class="form-select">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Investor Filters -->
+                <div id="investorFilters" class="filter-section" style="display: none;">
+                    <h5 class="fw-bold mb-3">Investor Filters</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Search Keywords</label>
+                        <input type="text" id="investorSearchInput" class="form-control" placeholder="Keywords...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Geo Preference</label>
+                        <select id="investorGeoFilter" class="form-select">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Investor Type</label>
+                        <select id="investorTypeFilter" class="form-select">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Investment Round</label>
+                        <select id="investorRoundFilter" class="form-select">
+                            <option value="">All Rounds</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Capital Seek</label>
+                        <select id="investorCapitalFilter" class="form-select">
+                            <option value="">All Ranges</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Targeted Sectors</label>
+                        <select id="investorSectorFilter" class="form-select">
+                            <option value="">All Sectors</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">ESG Preference</label>
+                        <select id="investorESGFilter" class="form-select">
+                            <option value="">All Preferences</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Navigation Tabs -->
+            <ul class="nav nav-pills justify-content-center mb-4" id="viewTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-view="projects">Project Power Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="representatives">Professional Power Search</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="investors">Investor Power Search</a>
+                </li>
+            </ul>
+
+            <!-- Cards -->
+            <div class="row g-4" id="cardsContainer">
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-primary" role="status"
+                        style="width:3rem;height:3rem; color: var(--theme-primary) !important;"></div>
+                    <p class="mt-3 text-muted">Loading directory...</p>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
+
+    <script>
+        // === Configuration ===
+        const viewConfig = {
+            projects: {
+                url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/project-list.csv',
+                headerRow: 2,
+                dataStart: 3,
+                type: 'project'
+            },
+            representatives: {
+                url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/representative-list.csv',
+                headerRow: 1,
+                dataStart: 2,
+                type: 'rep'
+            },
+            investors: {
+                url: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/working.csv',
+                headerRow: 1,
+                dataStart: 2,
+                type: 'investor'
+            }
+        };
+
+        let allData = [];
+        let currentView = 'projects';
+
+        $(document).ready(function () {
+            // Check auth
+            const userData = JSON.parse(localStorage.getItem('fraxyUser'));
+            if (!userData) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Show token count
+            if (userData.tokens !== undefined) {
+                $('#tokenDisplay').show();
+                $('#tokenCount').text(userData.tokens);
+            }
+
+            // Sidebar toggle
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+            // View switching
+            $('#viewTabs .nav-link').on('click', function (e) {
+                e.preventDefault();
+                $('#viewTabs .nav-link').removeClass('active');
+                $(this).addClass('active');
+                loadView($(this).data('view'));
+            });
+
+            // Project click handler
+            $(document).on('click', '.project-link', function (e) {
+                const user = JSON.parse(localStorage.getItem('fraxyUser'));
+                if (user && user.type === 'professional') {
+                    if (user.tokens <= 0) {
+                        e.preventDefault();
+                        alert('You have no tokens remaining. Please contact support to get more tokens.');
+                        return;
+                    }
+                    // Deduct token
+                    user.tokens--;
+                    localStorage.setItem('fraxyUser', JSON.stringify(user));
+                    $('#tokenCount').text(user.tokens);
+                    console.log('Token deducted for professional. Remaining:', user.tokens);
+                }
+            });
+
+            loadView('projects');
+        });
+
+        function loadView(viewName) {
+            currentView = viewName;
+            const config = viewConfig[viewName];
+
+            // Update UI/Sidebar
+            $('.filter-section').hide();
+            if (viewName === 'projects') $('#projectFilters').show();
+            else if (viewName === 'representatives') $('#professionalFilters').show();
+            else if (viewName === 'investors') $('#investorFilters').show();
+
+            $('#cardsContainer').html('<div class="col-12 text-center py-5"><div class="spinner-border text-primary" style="color: var(--theme-primary) !important;"></div><p class="mt-3">Loading data...</p></div>');
+
+            Papa.parse(config.url, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    const rawRows = results.data;
+                    if (rawRows.length <= config.dataStart) {
+                        $('#cardsContainer').html('<div class="text-center text-danger">Data source empty or invalid.</div>');
+                        return;
+                    }
+
+                    const headers = rawRows[config.headerRow].map(h => (h || '').trim().replace(/\n/g, ' '));
+                    allData = rawRows.slice(config.dataStart).map(rowArray => {
+                        const obj = {};
+                        rowArray.forEach((val, idx) => {
+                            if (idx < headers.length && headers[idx]) {
+                                obj[headers[idx]] = (val || '').trim();
+                            }
+                        });
+                        return obj;
+                    });
+
+                    // Filter out empty rows
+                    allData = allData.filter(d => {
+                        if (config.type === 'investor') return (d['Company'] || d['Company '] || d['Company Name']);
+                        if (config.type === 'project') return (d['Project Name'] || d['Project name']);
+                        if (config.type === 'rep') return (d.Representative || d['Company Representative'] || d['Project Representative']);
+                        return true;
+                    });
+
+                    // Merge local projects if in project view
+                    if (viewName === 'projects') {
+                        const localProjects = JSON.parse(localStorage.getItem('fraxyCreatedProjects')) || [];
+                        allData = [...localProjects, ...allData];
+                    }
+
+                    // Populate Filters
+                    populateFilters(viewName);
+                    renderCards(allData);
+                }
+            });
+        }
+
+        function populateFilters(viewName) {
+            if (viewName === 'projects') {
+                populateSelect('#projectLocationFilter', ['Asia', 'Europe', 'North America', 'Middle East', 'Australasia', 'Africa', 'South America']);
+                populateSelect('#projectSectorFilter', ['Financial Technology', 'Deep Technology', 'Environment, Energy and Clean Technology', 'Healthcare Technology', 'Consumer and Consumer Technology', 'Digital Entertainment and Media', 'Manufacturing Technology', 'Infrastructure and Real Estate Services', 'Food and Agriculture', 'Education', 'Logistics & Transportation']);
+                populateSelect('#projectRoundFilter', ['Seed & Pre-Series A', 'Series A', 'Series B', 'Series C and Beyond', 'IPO', 'Post IPO']);
+                populateSelect('#projectCapitalFilter', ['500,000 USD or below', '500,001 to 1,000,000 USD', '1,000,001 to 2,500,000 USD', '2,500,001 to 5,000,000 USD', '5,000,001 to 7,500,000 USD', '7,500,001 to 10,000,000 USD', '10,000,001 to 25,000,000 USD', '25,000,001 to 50,000,000 USD', '50,000,001 USD or above']);
+                populateSelect('#projectCooperationTypeFilter', ['Financial Investment', 'Strategic Investment', 'Joint Venture', 'Mergers and Acquisitions']);
+                populateSelect('#projectFormatFilter', ['Minority Stake', 'Majority Stake', '100% Acquisition', 'Venture Building']);
+                populateSelect('#projectFinancingFilter', ['Common Shares', 'Preferred Shares', 'Convertible Bonds', 'Bridge Loan', 'Others']);
+                populateSelect('#projectESGFilter', ['Risk-Managed', 'Impact Mandate', 'Value Alignment']);
+            } else if (viewName === 'representatives') {
+                populateSelect('#professionalLocationFilter', [...new Set(allData.map(r => r.Location || r['Company Location']).filter(Boolean))].sort());
+                const types = ['Accounting & Tax', 'Legal & Regulatory', 'Business Consultancy', 'Technology & Digital', 'Marketing & Branding', 'Human Resources', 'Financial & Investment Advisory'];
+                populateSelect('#professionalTypeFilter', types);
+            } else if (viewName === 'investors') {
+                populateSelect('#investorGeoFilter', ['Asia', 'Europe', 'North America', 'Middle East', 'Australasia', 'Africa', 'South America']);
+                populateSelect('#investorTypeFilter', [...new Set(allData.map(r => r['Company Type'] || r['Company Type - Investor / Others / Project Owner']).filter(Boolean))].sort());
+                populateSelect('#investorRoundFilter', ['Seed & Pre-Series A', 'Series A', 'Series B', 'Series C and Beyond', 'IPO']);
+                populateSelect('#investorCapitalFilter', ['500,000 USD or below', '500,001 to 1,000,000 USD', '1,000,001 to 2,500,000 USD', '2,500,001 to 5,000,000 USD', '5,000,001 to 7,500,000 USD', '7,500,001 to 10,000,000 USD', '10,000,001 to 25,000,000 USD', '25,000,001 to 50,000,000 USD', '50,000,001 USD or above']);
+                populateSelect('#investorSectorFilter', ['Financial Technology', 'Deep Technology', 'Environment, Energy and Clean Technology', 'Healthcare Technology', 'Consumer', 'Digital Entertainment and Media', 'Manufacturing Technology', 'Infrastructure and Real Estate Services', 'Food and Agriculture', 'Education']);
+                populateSelect('#investorESGFilter', ['Risk-Managed', 'Impact Mandate', 'Value Alignment']);
+            }
+        }
+
+        function populateSelect(selector, items) {
+            const select = $(selector).empty().append('<option value="">All</option>');
+            items.forEach(item => {
+                select.append(`<option value="${item}">${item}</option>`);
+            });
+        }
+
+        function renderCards(data) {
+            const container = $('#cardsContainer').empty();
+            if (data.length === 0) {
+                container.html('<div class="col-12 text-center py-5"><h5>No results found matching your criteria.</h5></div>');
+                return;
+            }
+
+            data.forEach(row => {
+                let cardHTML = '';
+                if (currentView === 'projects') {
+                    const company = row['Company Name'] || '';
+                    const title = row['Project Name'] || '';
+                    const location = row['Project Location'] || '—';
+                    const desc = row['Project Dexcription'] || '';
+                    const shortDesc = desc.length > 150 ? desc.substring(0, 150) + '...' : desc;
+
+                    cardHTML = `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-1">
+                                        ${title}
+                                        ${row.isLocal ? '<span class="badge bg-warning text-dark ms-2" style="font-size: 0.7rem;">New</span>' : ''}
+                                    </h5>
+                                    <h6 class="card-subtitle text-muted mb-3">${company}</h6>
+                                    <div class="mb-3"><span class="badge bg-info text-dark">${location}</span></div>
+                                    <p class="card-text small text-muted flex-grow-1">${shortDesc}</p>
+                                    <a href="detail.html?type=project&id=${encodeURIComponent(title)}" class="btn btn-outline-purple btn-sm mt-3 stretched-link project-link">View Details</a>
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (currentView === 'representatives') {
+                    const name = row.Representative || row['Company Representative'] || '—';
+                    const company = row.Company || '—';
+                    const title = row.Title || row['Representative Title'] || '—';
+                    const location = row.Location || row['Company Location'] || '—';
+
+                    cardHTML = `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body text-center">
+                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 80px; height: 80px;">
+                                        <i class="bi bi-person fs-1 text-muted"></i>
+                                    </div>
+                                    <h5 class="card-title mb-1">${name}</h5>
+                                    <p class="text-primary mb-1" style="color: var(--theme-primary) !important;">${title}</p>
+                                    <p class="text-muted small mb-3">${company}</p>
+                                    <div class="badge bg-light text-dark border mb-3">${location}</div>
+                                    <a href="detail.html?type=representative&id=${encodeURIComponent(name)}" class="btn btn-outline-purple btn-sm mt-auto stretched-link">View Profile</a>
+                                </div>
+                            </div>
+                        </div>`;
+                } else if (currentView === 'investors') {
+                    const company = row['Company'] || row['Company '] || '—';
+                    const type = row['Company Type'] || '—';
+                    const location = row['Location'] || row['Company Location'] || '—';
+                    const about = row['About'] || '';
+                    const shortAbout = about.length > 150 ? about.substring(0, 150) + '...' : about;
+
+                    cardHTML = `
+                        <div class="col-lg-4 col-md-6">
+                            <div class="card h-100 shadow-sm">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title mb-1">${company}</h5>
+                                    <h6 class="card-subtitle text-muted mb-3">${type}</h6>
+                                    <div class="mb-3"><span class="badge bg-info text-dark">${location}</span></div>
+                                    <p class="card-text small text-muted flex-grow-1">${shortAbout}</p>
+                                    <a href="detail.html?type=investor&id=${encodeURIComponent(company)}" class="btn btn-outline-purple btn-sm mt-3 stretched-link">View Profile</a>
+                                </div>
+                            </div>
+                        </div>`;
+                }
+                container.append(cardHTML);
+            });
+        }
+
+        // Filtering Logic
+        $(document).on('input change', 'input, select', function () {
+            applyFilters();
+        });
+
+        function applyFilters() {
+            let filtered = allData;
+
+            if (currentView === 'projects') {
+                const kw = $('#projectSearchInput').val().toLowerCase();
+                const loc = $('#projectLocationFilter').val();
+                const sector = $('#projectSectorFilter').val();
+                const round = $('#projectRoundFilter').val();
+                const capital = $('#projectCapitalFilter').val();
+                const coop = $('#projectCooperationTypeFilter').val();
+                const format = $('#projectFormatFilter').val();
+                const fin = $('#projectFinancingFilter').val();
+                const esg = $('#projectESGFilter').val();
+
+                filtered = allData.filter(d => {
+                    const matchKw = !kw || JSON.stringify(d).toLowerCase().includes(kw);
+                    const matchLoc = !loc || d['Project Location'] === loc;
+                    const matchSector = !sector || (d[sector] === 'Y' || (d['Targeted Sector'] || '').includes(sector));
+                    const matchRound = !round || (d[round] === 'Y' || (d['Investment Round'] || '').includes(round));
+                    const matchCap = !capital || (d[capital] === 'Y' || (d['Investment Capital '] || d['Investment Capial / Capital Seek'] || '').includes(capital));
+                    // Simple matches for the rest
+                    const matchCoop = !coop || JSON.stringify(d).includes(coop);
+                    const matchFormat = !format || d['Format of Cooperation'] === format;
+                    const matchFin = !fin || d['Target Financing Structure'] === fin;
+                    const matchESG = !esg || d['ESG Target'] === esg;
+
+                    return matchKw && matchLoc && matchSector && matchRound && matchCap && matchCoop && matchFormat && matchFin && matchESG;
+                });
+            } else if (currentView === 'representatives') {
+                const kw = $('#professionalSearchInput').val().toLowerCase();
+                const loc = $('#professionalLocationFilter').val();
+                const type = $('#professionalTypeFilter').val();
+
+                filtered = allData.filter(d => {
+                    const matchKw = !kw || JSON.stringify(d).toLowerCase().includes(kw);
+                    const matchLoc = !loc || (d.Location || d['Company Location']) === loc;
+                    const matchType = !type || (d.Type || d['Company Sub-Type']) === type;
+                    return matchKw && matchLoc && matchType;
+                });
+            } else if (currentView === 'investors') {
+                const kw = $('#investorSearchInput').val().toLowerCase();
+                const geo = $('#investorGeoFilter').val();
+                const type = $('#investorTypeFilter').val();
+                const round = $('#investorRoundFilter').val();
+                const capital = $('#investorCapitalFilter').val();
+                const sector = $('#investorSectorFilter').val();
+                const esg = $('#investorESGFilter').val();
+
+                filtered = allData.filter(d => {
+                    const matchKw = !kw || JSON.stringify(d).toLowerCase().includes(kw);
+                    const matchGeo = !geo || (d['Invesment Geographcy Preference'] === geo || d[geo] === 'Y');
+                    const matchType = !type || d['Company Type'] === type;
+                    const matchRound = !round || (d[round] === 'Y' || (d['Inveetment Round'] || '').includes(round));
+                    const matchCap = !capital || (d[capital] === 'Y' || (d['Investment Capial / Capital Seek'] || '').includes(capital));
+                    const matchSector = !sector || (d[sector] === 'Y' || (d['Targeted Sector'] || '').includes(sector));
+                    const matchESG = !esg || (d['ESG preference'] === esg || JSON.stringify(d).includes(esg));
+
+                    return matchKw && matchGeo && matchType && matchRound && matchCap && matchSector && matchESG;
+                });
+            }
+
+            renderCards(filtered);
+        }
+    </script>
 </body>
 
 </html>

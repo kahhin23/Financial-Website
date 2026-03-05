@@ -10,6 +10,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        :root {
+            --theme-primary: #0d6efd;
+            --theme-gradient: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            --theme-bg-soft: rgba(13, 110, 253, 0.1);
+        }
+
+        body.theme-project {
+            --theme-primary: #198754;
+            --theme-gradient: linear-gradient(135deg, #198754 0%, #157347 100%);
+            --theme-bg-soft: rgba(25, 135, 84, 0.1);
+        }
+
+        body.theme-professional {
+            --theme-primary: #6f42c1;
+            --theme-gradient: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+            --theme-bg-soft: rgba(111, 66, 193, 0.1);
+        }
+
         body {
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
@@ -27,7 +45,7 @@
         }
 
         .profile-header {
-            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            background: var(--theme-gradient);
             color: white;
             padding: 2rem;
             text-align: center;
@@ -43,7 +61,7 @@
             align-items: center;
             justify-content: center;
             font-size: 3rem;
-            color: #0d6efd;
+            color: var(--theme-primary);
             margin: 0 auto 1rem;
             overflow: hidden;
             border: 3px solid rgba(255, 255, 255, 0.5);
@@ -64,9 +82,9 @@
             align-items: center;
             justify-content: center;
             font-size: 1.5rem;
-            color: #0d6efd;
+            color: var(--theme-primary);
             overflow: hidden;
-            border: 2px solid rgba(13, 110, 253, 0.1);
+            border: 2px solid var(--theme-bg-soft);
         }
 
         .avatar-preview-sm img {
@@ -83,7 +101,8 @@
         }
 
         .nav-pills .nav-link.active {
-            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+            background-color: var(--theme-primary);
+            box-shadow: 0 4px 15px var(--theme-bg-soft);
         }
 
         .form-label {
@@ -93,7 +112,33 @@
         }
 
         .form-control:focus {
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1);
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 0.25rem var(--theme-bg-soft);
+        }
+
+        .text-theme-primary {
+            color: var(--theme-primary) !important;
+        }
+
+        .btn-theme-primary {
+            background-color: var(--theme-primary);
+            border-color: var(--theme-primary);
+            color: white;
+        }
+
+        .btn-theme-primary:hover {
+            filter: brightness(0.9);
+            color: white;
+        }
+
+        .btn-outline-theme {
+            color: var(--theme-primary);
+            border-color: var(--theme-primary);
+        }
+
+        .btn-outline-theme:hover {
+            background-color: var(--theme-primary);
+            color: white;
         }
 
         .save-bar {
@@ -119,7 +164,7 @@
         <div class="row justify-content-center">
             <div class="col-md-9">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <a href="investor-dashboard.html" class="btn btn-link text-decoration-none p-0">
+                    <a href="#" class="btn btn-link text-decoration-none p-0" id="backToDashboard">
                         <i class="bi bi-arrow-left"></i> Back to Dashboard
                     </a>
                 </div>
@@ -209,7 +254,8 @@
                                             <label class="form-label">Confirm New Password</label>
                                             <input type="password" class="form-control" id="confirmNewPassword">
                                         </div>
-                                        <button type="button" class="btn btn-primary" id="updatePasswordBtn">Update
+                                        <button type="button" class="btn btn-theme-primary"
+                                            id="updatePasswordBtn">Update
                                             Password</button>
                                     </form>
                                 </div>
@@ -232,10 +278,10 @@
                                             <h6 class="fw-bold mb-3">Token Usage</h6>
                                             <div class="d-flex justify-content-between align-items-center">
                                                 <div>
-                                                    <h3 class="mb-0 fw-bold text-primary" id="tokenBalance">0</h3>
+                                                    <h3 class="mb-0 fw-bold text-theme-primary" id="tokenBalance">0</h3>
                                                     <p class="small text-muted mb-0">Tokens available</p>
                                                 </div>
-                                                <button class="btn btn-outline-primary btn-sm">Upgrade Plan</button>
+                                                <button class="btn btn-outline-theme btn-sm">Upgrade Plan</button>
                                             </div>
                                         </div>
                                     </div>
@@ -253,7 +299,7 @@
         <span class="text-muted small">You have unsaved changes</span>
         <div class="d-flex gap-2">
             <button class="btn btn-light btn-sm px-3" id="discardBtn">Discard</button>
-            <button class="btn btn-primary btn-sm px-4" id="saveBtn">Save Changes</button>
+            <button class="btn btn-theme-primary btn-sm px-4" id="saveBtn">Save Changes</button>
         </div>
     </div>
 
@@ -278,6 +324,18 @@
                 const email = userData.Email || userData.email || '';
                 const type = userData.UserType || userData.type || '';
                 const tokens = userData.tokens !== undefined ? userData.tokens : (userData.Tokens || 0);
+
+                // Apply Theme
+                $('body').removeClass('theme-project theme-professional');
+                if (type === 'project') $('body').addClass('theme-project');
+                else if (type === 'professional') $('body').addClass('theme-professional');
+
+                // Determine dashboard link
+                let dashboardPage = 'investor-dashboard.html';
+                if (type === 'project') dashboardPage = 'project-dashboard.html';
+                else if (type === 'professional') dashboardPage = 'professional-dashboard.html';
+
+                $('#backToDashboard').attr('href', dashboardPage);
 
                 $('#userNameDisplay').text(`${firstName} ${lastName}`.trim() || email);
                 $('#userTypeDisplay').text(type.charAt(0).toUpperCase() + type.slice(1));

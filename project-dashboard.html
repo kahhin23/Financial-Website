@@ -7,27 +7,548 @@
     <title>Project Dashboard - Fraxy Match Deal Making 2026</title>
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
+        :root {
+            --theme-primary: #198754;
+            --theme-gradient: linear-gradient(135deg, #198754 0%, #157347 100%);
+            --bg-gradient: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.4);
+        }
+
         body {
-            background-color: #f8f9fa;
-            font-family: system-ui, -apple-system, sans-serif;
+            background: var(--bg-gradient);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
             min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .dashboard-header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+        }
+
+        /* Sidebar Styles */
+        #sidebar {
+            min-width: 300px;
+            max-width: 300px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s ease;
+            border-right: 1px solid var(--glass-border);
+            height: calc(100vh - 80px);
+            position: sticky;
+            top: 80px;
+            overflow-y: auto;
+            z-index: 900;
+            scrollbar-width: thin;
+            padding: 2rem;
+        }
+
+        #sidebar.active {
+            margin-left: -300px;
+        }
+
+        .wrapper {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
+            width: 100%;
+            align-items: flex-start;
+        }
+
+        #content {
+            width: 100%;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-pills .nav-link {
+            color: #6c757d;
+            border-radius: 50px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            margin: 0 0.25rem;
+        }
+
+        .nav-pills .nav-link.active {
+            background: var(--theme-gradient);
+            box-shadow: 0 4px 15px rgba(25, 135, 84, 0.3);
+            color: white;
+        }
+
+        .form-control,
+        .form-select {
+            border-radius: 10px;
+            padding: 0.6rem 1rem;
+            border: 1px solid #dee2e6;
+            background-color: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.1);
+            background-color: #fff;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                height: 100vh;
+                top: 0;
+                margin-left: -300px;
+            }
+
+            #sidebar.active {
+                margin-left: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <h1 class="mb-4">Project Dashboard</h1>
-        <p class="fs-4 text-muted">This page is under Project account category.</p>
-        <a href="index.html" class="btn btn-outline-danger mt-4">
-            Logout
-        </a>
+    <header class="dashboard-header">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <button type="button" id="sidebarCollapse" class="btn btn-light shadow-sm border rounded-circle d-none"
+                    style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-filter"></i>
+                </button>
+                <span class="h4 fw-bold mb-0 text-dark">Fraxy Match</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <div id="tokenDisplay" style="display: none;">
+                    <div class="badge bg-white text-dark shadow-sm border d-flex align-items-center gap-2"
+                        style="font-size: 1rem; padding: 0.5rem 1rem;">
+                        <i class="bi bi-coin text-warning"></i>
+                        <span>Tokens: <strong id="tokenCount" class="text-success">0</strong></span>
+                    </div>
+                </div>
+                <a href="profile-management.html" class="btn btn-light shadow-sm border btn-sm rounded-pill px-3">
+                    <i class="bi bi-person me-1"></i> Profile
+                </a>
+                <a href="index.html" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                    <i class="bi bi-box-arrow-right me-1"></i> Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="wrapper">
+        <!-- Sidebar (for Professional Search) -->
+        <nav id="sidebar" class="active">
+            <div class="p-4" id="filterContainer">
+                <div id="professionalFilters" class="filter-section">
+                    <h5 class="fw-bold mb-3">Professional Filters</h5>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Search Keywords</label>
+                        <input type="text" id="professionalSearchInput" class="form-control"
+                            placeholder="Keywords/Tags...">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Location</label>
+                        <select id="professionalLocationFilter" class="form-select">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Type</label>
+                        <select id="professionalTypeFilter" class="form-select">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <!-- Tabs -->
+            <ul class="nav nav-pills justify-content-center mb-4" id="viewTabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#" data-view="project-creation">Project Creation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#" data-view="professional-search">Professional Power Search</a>
+                </li>
+            </ul>
+
+            <div id="viewContainer" class="container">
+                <!-- Project Creation Form -->
+                <div id="projectCreationView" class="card shadow-sm mb-5 p-4">
+                    <h3 class="fw-bold mb-4">Create New Project</h3>
+                    <form id="projectForm">
+                        <div class="row g-3">
+                            <!-- Basic Info -->
+                            <div class="col-md-12">
+                                <label class="form-label fw-bold">Project Name</label>
+                                <input type="text" id="pName" class="form-control" required
+                                    placeholder="Enter project name">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Project Description (English, <500 Words)</label>
+                                        <textarea id="pDesc" class="form-control" rows="4" maxlength="3000" required
+                                            placeholder="Describe your project..."></textarea>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Project Description 中文 (<500 Words)</label>
+                                        <textarea id="pDescCn" class="form-control" rows="4" maxlength="3000"
+                                            placeholder="请描述您的项目..."></textarea>
+                            </div>
+
+                            <!-- Geography -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Project Location</label>
+                                <select id="pLocation" class="form-select" required>
+                                    <option value="">Select Location</option>
+                                    <option>Asia</option>
+                                    <option>Europe</option>
+                                    <option>North America</option>
+                                    <option>Middle East</option>
+                                    <option>Australasia</option>
+                                    <option>Africa</option>
+                                    <option>South America</option>
+                                </select>
+                            </div>
+
+                            <!-- Investment -->
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Investment Round</label>
+                                <select id="pRound" class="form-select" required>
+                                    <option value="">Select Round</option>
+                                    <option>Seed & Pre-Series A</option>
+                                    <option>Series A</option>
+                                    <option>Series B</option>
+                                    <option>Series C and Beyond</option>
+                                    <option>IPO</option>
+                                    <option>Post IPO</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label fw-bold">Capital Seek</label>
+                                <select id="pCapital" class="form-select" required>
+                                    <option value="">Select Range</option>
+                                    <option>500,000 USD or below</option>
+                                    <option>500,001 to 1,000,000 USD</option>
+                                    <option>1,000,001 to 2,500,000 USD</option>
+                                    <option>2,500,001 to 5,000,000 USD</option>
+                                    <option>5,000,001 to 7,500,000 USD</option>
+                                    <option>7,500,001 to 10,000,000 USD</option>
+                                    <option>10,000,001 to 25,000,000 USD</option>
+                                    <option>25,000,001 to 50,000,000 USD</option>
+                                    <option>50,000,001 USD or above</option>
+                                </select>
+                            </div>
+
+                            <!-- Sector -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Project Sector</label>
+                                <select id="pSector" class="form-select" required>
+                                    <option value="">Select Sector</option>
+                                    <option>Financial Technology</option>
+                                    <option>Deep Technology</option>
+                                    <option>Environment, Energy and Clean Technology</option>
+                                    <option>Healthcare Technology</option>
+                                    <option>Consumer and Consumer Technology</option>
+                                    <option>Digital Entertainment and Media</option>
+                                    <option>Manufacturing Technology</option>
+                                    <option>Infrastructure and Real Estate Services</option>
+                                    <option>Food and Agriculture</option>
+                                    <option>Education</option>
+                                    <option>Logistics & Transportation</option>
+                                    <option>Business & Professional Services</option>
+                                </select>
+                            </div>
+
+                            <!-- Cooperation -->
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Format of Cooperation</label>
+                                <select id="pFormat" class="form-select" required>
+                                    <option value="">Select Format</option>
+                                    <option>Carve-out</option>
+                                    <option>Joint Venture / Partnership</option>
+                                    <option>Licensing</option>
+                                    <option>Minority Stake</option>
+                                    <option>Majority Stake</option>
+                                    <option>Management Buyout / Buy-in</option>
+                                    <option>Mezzanine / Debt Financing</option>
+                                    <option>Privatisation</option>
+                                    <option>Takeover</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold">Target Financing Structure</label>
+                                <select id="pFinancing" class="form-select" required>
+                                    <option value="">Select Structure</option>
+                                    <option>Bridge Loan</option>
+                                    <option>Common Shares</option>
+                                    <option>Preferenced Shares</option>
+                                    <option>Equity-linked Securities</option>
+                                </select>
+                            </div>
+
+                            <!-- Revenue & ESG -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Revenue Generating?</label>
+                                <select id="pRevenue" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option>Yes</option>
+                                    <option>No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">ESG Target</label>
+                                <select id="pESG" class="form-select" required>
+                                    <option value="">Select...</option>
+                                    <option>Agnostic</option>
+                                    <option>Risk-Managed</option>
+                                    <option>Transition-Ready</option>
+                                    <option>Positive Screening</option>
+                                    <option>Impact Mandate</option>
+                                </select>
+                            </div>
+
+                            <!-- Uploads -->
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Pitchbook</label>
+                                <input type="file" id="pPitchbook" class="form-control" accept=".pdf,.ppt,.pptx">
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold">Teaser</label>
+                                <input type="file" id="pTeaser" class="form-control" accept=".pdf,.doc,.docx">
+                            </div>
+
+                            <div class="col-12 mt-4 text-center">
+                                <button type="submit" class="btn btn-primary px-5 btn-lg">Submit Project</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Professional Search View -->
+                <div id="professionalSearchView" style="display: none;">
+                    <div class="row g-4" id="cardsContainer">
+                        <div class="col-12 text-center py-5">
+                            <div class="spinner-border text-primary" role="status"></div>
+                            <p class="mt-3 text-muted">Loading professionals...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.0/papaparse.min.js"></script>
+
+    <script>
+        const config = {
+            professionalUrl: 'https://raw.githubusercontent.com/kahhin23/Financial-Website/main/representative-list.csv',
+            headerRow: 1,
+            dataStart: 2
+        };
+
+        let allProfessionals = [];
+
+        function renderProfessionalCards(data) {
+            const container = $('#cardsContainer');
+            container.empty();
+
+            if (!data || data.length === 0) {
+                container.html('<div class="col-12 text-center py-5"><h5>No matching professionals found</h5></div>');
+                return;
+            }
+
+            data.forEach(row => {
+                const repName = (row['Company Representative'] || '').trim();
+                const company = (row['Company Name'] || '').trim();
+                const title = (row['Title'] || '').trim();
+
+                if (!repName) return;
+
+                const cardHTML = `
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body text-center">
+                <div class="mb-3">
+                  <i class="bi bi-person-circle display-4 text-secondary"></i>
+                </div>
+                <h5 class="card-title">${repName}</h5>
+                <p class="text-primary mb-1">${title}</p>
+                <p class="text-muted smaller mb-3">${company}</p>
+                <a href="detail.html?type=representative&id=${encodeURIComponent(repName)}" class="btn btn-outline-success btn-sm stretched-link">View Profile</a>
+              </div>
+            </div>
+          </div>`;
+                container.append(cardHTML);
+            });
+        }
+
+        function applyProfessionalFilters() {
+            const search = $('#professionalSearchInput').val().toLowerCase().trim();
+            const loc = $('#professionalLocationFilter').val();
+            const type = $('#professionalTypeFilter').val();
+
+            const filtered = allProfessionals.filter(row => {
+                let match = true;
+                const values = Object.values(row).join(' ').toLowerCase();
+                const location = (row.Location || row['Company Location'] || '');
+                const compType = (row['Company Type'] || row['Company Type - \nInvestor / Others / Project Owner'] || '');
+
+                if (search) match = match && values.includes(search);
+                if (loc) match = match && location.includes(loc);
+                if (type) match = match && compType.includes(type);
+
+                return match;
+            });
+
+            renderProfessionalCards(filtered);
+        }
+
+        function loadProfessionals() {
+            Papa.parse(config.professionalUrl, {
+                download: true,
+                header: false,
+                skipEmptyLines: true,
+                complete: function (results) {
+                    const rawRows = results.data;
+                    if (rawRows.length <= config.dataStart) return;
+
+                    const headers = rawRows[config.headerRow].map(h => (h || '').trim().replace(/\n/g, ' '));
+                    allProfessionals = rawRows.slice(config.dataStart).map(rowArray => {
+                        const obj = {};
+                        rowArray.forEach((val, idx) => {
+                            if (idx < headers.length && headers[idx]) {
+                                obj[headers[idx]] = (val || '').trim();
+                            }
+                        });
+                        return obj;
+                    });
+
+                    // Filter empty
+                    allProfessionals = allProfessionals.filter(d => d.Representative || d['Company Representative']);
+
+                    // Populate selects
+                    populateSelect('#professionalLocationFilter', [...new Set(allProfessionals.map(r => r.Location || r['Company Location']).filter(Boolean))].sort());
+                    populateSelect('#professionalTypeFilter', [...new Set(allProfessionals.map(r => r['Company Type'] || r['Company Type - \nInvestor / Others / Project Owner']).filter(Boolean))].sort());
+
+                    renderProfessionalCards(allProfessionals);
+                }
+            });
+        }
+
+        function populateSelect(selector, items) {
+            const select = $(selector);
+            select.empty().append(`<option value="">All ${selector.includes('Location') ? 'Locations' : 'Types'}</option>`);
+            items.forEach(item => select.append(`<option value="${item}">${item}</option>`));
+        }
+
+        function switchView(view) {
+            $('.nav-link').removeClass('active');
+            $(`.nav-link[data-view="${view}"]`).addClass('active');
+
+            if (view === 'project-creation') {
+                $('#projectCreationView').show();
+                $('#professionalSearchView').hide();
+                $('#sidebar').addClass('active'); // Hide sidebar for form
+                $('#sidebarCollapse').addClass('d-none');
+            } else {
+                $('#projectCreationView').hide();
+                $('#professionalSearchView').show();
+                $('#sidebar').removeClass('active'); // Show sidebar for search
+                $('#sidebarCollapse').removeClass('d-none');
+                if (allProfessionals.length === 0) loadProfessionals();
+            }
+        }
+
+        $(document).ready(function () {
+            // Toggle sidebar
+            $('#sidebarCollapse').on('click', function () {
+                $('#sidebar').toggleClass('active');
+            });
+
+            // Tab switch
+            $('.nav-link').on('click', function (e) {
+                e.preventDefault();
+                switchView($(this).data('view'));
+            });
+
+            // Filter events
+            $(document).on('input', '#professionalSearchInput', applyProfessionalFilters);
+            $(document).on('change', 'select', applyProfessionalFilters);
+
+            // Form submission
+            $('#projectForm').on('submit', function (e) {
+                e.preventDefault();
+
+                const userData = JSON.parse(localStorage.getItem('fraxyUser')) || {};
+                const fullName = (userData.FirstName && userData.LastName) ? (userData.FirstName + ' ' + userData.LastName) : (userData.FirstName || userData.LastName || 'Project Owner');
+                const companyName = userData.CompanyName || fullName || 'New Project Owner';
+
+                const newProject = {
+                    'Project Name': $('#pName').val().trim(),
+                    'Project Location': $('#pLocation').val(),
+                    'Project Dexcription': $('#pDesc').val().trim(), // Note: retained typo 'Dexcription' for compatibility
+                    'Project Description Chinese': $('#pDescCn').val().trim(),
+                    'Company Name': companyName,
+                    'Project Representative': fullName,
+                    'Targeted Sector': $('#pSector').val(),
+                    'Format of Cooperation': $('#pFormat').val(),
+                    'Target Financing Structure': $('#pFinancing').val(),
+                    'Is the project currently revenue generating?': $('#pRevenue').val(),
+                    'ESG Target': $('#pESG').val(),
+                    'isLocal': true // Flag to identify local projects
+                };
+
+                // Map specific sectors, rounds, and capital to 'Y' for filtering logic
+                const sector = $('#pSector').val();
+                if (sector) newProject[sector] = 'Y';
+
+                const round = $('#pRound').val();
+                if (round) newProject[round] = 'Y';
+
+                const capital = $('#pCapital').val();
+                if (capital) newProject[capital] = 'Y';
+
+                // Save to localStorage
+                let localProjects = JSON.parse(localStorage.getItem('fraxyCreatedProjects')) || [];
+                localProjects.push(newProject);
+                localStorage.setItem('fraxyCreatedProjects', JSON.stringify(localProjects));
+
+                alert('Project created successfully! You can now see it in the Investor Dashboard.');
+                this.reset();
+            });
+
+            // Initial view
+            switchView('project-creation');
+        });
+    </script>
 </body>
 
 </html>
